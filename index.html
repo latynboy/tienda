@@ -48,7 +48,6 @@
     .prod-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 4px; }
     .prod-meta { display: flex; gap: 12px; font-size: 12px; color: var(--text-muted); font-weight: 500; }
     .stock-badge { background: #e6f4ea; color: #137333; padding: 2px 8px; border-radius: 6px; font-weight: 600; }
-    .stock-badge ${esBajo ? 'stock-low' : ''} { font-weight: 600; }
     .stock-low { background: #fce8e6; color: #c5221f; }
     .prod-price { font-size: 17px; font-weight: 700; color: var(--text-main); text-align: right; }
     .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border); }
@@ -154,4 +153,235 @@
     <div id="modal-escaner">
       <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; color: white;">
         <span style="font-weight: 600; font-size: 15px;">Lector de Barras</span>
-        <button onclick="cerrarEscaner()" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 44px; height: 44px; border-radius:
+        <button onclick="cerrarEscaner()" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 44px; height: 44px; border-radius: 50%; font-size: 16px; font-weight: bold; cursor: pointer;">✕</button>
+      </div>
+      <div class="cam-box">
+        <div id="lector-camara"></div>
+        <div class="laser"></div>
+      </div>
+      <div style="color: rgba(255,255,255,0.5); text-align: center; font-size: 13px; font-weight: 500;">Enfoque el código dentro del recuadro iluminado</div>
+    </div>
+  </div>
+
+  <script>
+    // 🔗 URL GENERADA DESDE TU GOOGLE SHEETS (APPS SCRIPT)
+    const URL_API_SHEETS = "https://script.google.com/macros/s/AKfycbwurZXSpZ3j77-t_86QAuCCuDDut7zay5orpZhMSf_VyGmuLolB30K8-XrUhUAVfkc3/exec";
+    
+    let inventarioLocal = [];
+    let carrito = [];
+    let html5QrcodeScanner = null;
+    let currentScannerContext = '';
+    let codigoActualFoco = '';
+
+    window.onload = () => {
+      cargarInventarioReal();
+      const mesesNom = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+      document.getElementById("txt-mes-gestion").innerText = "Monitor de " + mesesNom[new Date().getMonth()];
+    };
+
+    function cambiarPestaña(pestañaTarget) {
+      document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
+      document.getElementById('tab-' + pestañaTarget).classList.add('active');
+      document.getElementById('view-' + pestañaTarget).classList.add('active');
+    }
+
+    function cargarInventarioReal() {
+      fetch(URL_API_SHEETS)
+        .then(r => r.json())
+        .then(d => { inventarioLocal = d; renderizarInventario(d); })
+        .catch(e => console.error("Error conectando a Sheets:", e));
+    }
+
+    function renderizarInventario(arr) {
+      const contenedor = document.getElementById("lista-inventario-cards");
+      contenedor.innerHTML = "";
+      if(arr.length === 0) { contenedor.innerHTML = "<p style='color:#999; text-align:center;'>Sin artículos en catálogo</p>"; return; }
+      
+      arr.forEach(p => {
+        const esBajo = p.stock <= 5;
+        const itemHTML = `
+          <div class="prod-card">
+            <div class="prod-info">
+              <div class="prod-title">${p.descripcion}</div>
+              <div class="prod-meta">
+                <span>ID: ${p.codigo}</span>
+                <span class="stock-badge ${esBajo ? 'stock-low' : ''}">${p.stock} pzas</span>
+              </div>
+            </div>
+            <div class="prod-price">$${p.precio}</div>
+          </div>`;
+        contenedor.insertAdjacentHTML('beforeend', itemHTML);
+      });
+    }
+
+    function filtrarInventario() {
+      let txt = document.getElementById("busqueda-inventario").value.toLowerCase().trim();
+      if(!txt) { renderizarInventario(inventarioLocal); return; }
+      
+      let filtrados = inventarioLocal.filter(p => p.descripcion.toLowerCase().includes(txt) || p.codigo.includes(txt));
+      renderizarInventario(filtrados);
+
+      let exacto = inventarioLocal.find(p => p.codigo === txt);
+      if(exacto) { activarFormularioDinamico(exacto, true); }
+      else if(txt.length >= 10 && !exacto) { activarFormularioDinamico({codigo: txt, descripcion:'', precio:'', stock: 0}, false); }
+    }
+
+    function activarFormularioDinamico(p, existe) {
+      codigoActualFoco = p.codigo;
+      document.getElementById("card-registro-dinamico").style.display = "block";
+      document.getElementById("titulo-registro-dinamico").innerText = existe ? "🔄 Reabastecer Stock" : "✨ Registrar Producto Nuevo";
+      
+      let inpDesc = document.getElementById("reg-descripcion");
+      inpDesc.value = p.descripcion;
+      inpDesc.disabled = existe; 
+      
+      document.getElementById("reg-precio").value = p.precio;
+      document.getElementById("reg-stock").value = "";
+      document.getElementById("reg-stock").placeholder = existe ? "Cantidad a sumar" : "Stock Inicial";
+    }
+
+    function cancelarRegistroDinamico() {
+      document.getElementById("card-registro-dinamico").style.display = "none";
+      document.getElementById("busqueda-inventario").value = "";
+      renderizarInventario(inventarioLocal);
+    }
+
+    function guardarRegistroDinamico() {
+      let desc = document.getElementById("reg-descripcion").value.trim();
+      let cant = Number(document.getElementById("reg-stock").value) || 0;
+      let prec = Number(document.getElementById("reg-precio").value) || 0;
+      
+      if(!desc || cant <= 0 || prec <= 0) return alert("Completa los campos con valores correctos.");
+      
+      let pExiste = inventarioLocal.find(x => x.codigo === codigoActualFoco);
+      let stockFinalEnvio = pExiste ? (Number(pExiste.stock) + cant) : cant;
+
+      fetch(URL_API_SHEETS, {
+        method: "POST",
+        mode: "no-cors",
+        body: JSON.stringify({
+          accion: "guardar_gestion",
+          datos: { codigo: codigoActualFoco, descripcion: desc, stock: stockFinalEnvio, precio: prec }
+        })
+      }).then(() => {
+        alert("¡Google Sheets actualizado!");
+        document.getElementById("card-registro-dinamico").style.display = "none";
+        document.getElementById("busqueda-inventario").value = "";
+        cargarInventarioReal();
+      });
+    }
+
+    function abrirEscaner(ctx) {
+      currentScannerContext = ctx;
+      document.getElementById('modal-escaner').style.display = 'flex';
+      html5QrcodeScanner = new Html5QrcodeScanner("lector-camara", { fps: 24, qrbox: { width: 280, height: 160 } });
+      html5QrcodeScanner.render(txt => {
+        if (navigator.vibrate) navigator.vibrate(60);
+        cerrarEscaner();
+        if(currentScannerContext === 'inventario') {
+          document.getElementById("busqueda-inventario").value = txt;
+          filtrarInventario();
+        } else if(currentScannerContext === 'carrito') {
+          agregarAlCarritoDirecto(txt);
+        }
+      }, () => {});
+    }
+
+    function cerrarEscaner() {
+      if(html5QrcodeScanner) {
+        html5QrcodeScanner.clear().then(() => { document.getElementById('modal-escaner').style.display = 'none'; });
+      } else { document.getElementById('modal-escaner').style.display = 'none'; }
+    }
+
+    function agregarAlCarritoDirecto(cod) {
+      let match = inventarioLocal.find(x => x.codigo === cod);
+      if (!match) return alert("Código no registrado en el Inventario.");
+      
+      let incart = carrito.find(x => x.codigo === cod);
+      if(incart) {
+        if(match.stock < (incart.cantidad + 1)) return alert("Almacén insuficiente.");
+        incart.cantidad++;
+      } else {
+        if(match.stock < 1) return alert("Producto agotado.");
+        carrito.push({ codigo: cod, descripcion: match.descripcion, cantidad: 1, precio: match.precio });
+      }
+      renderizarCarrito();
+    }
+
+    function agregarAlCarritoManual() {
+      let c = document.getElementById("input-carrito-codigo").value.trim();
+      if(!c) return alert("Ingresa un código.");
+      agregarAlCarritoDirecto(c);
+      document.getElementById("input-carrito-codigo").value = "";
+    }
+
+    function eliminarArticulo(index) {
+      carrito.splice(index, 1);
+      renderizarCarrito();
+    }
+
+    function renderizarCarrito() {
+      let cont = document.getElementById("elementos-carrito");
+      cont.innerHTML = "";
+      if(carrito.length === 0) {
+        cont.innerHTML = `<p id="carrito-vacio" style="text-align:center;color:var(--text-muted);font-size:14px;padding:20px 0;">El carrito está vacío</p>`;
+        document.getElementById("resumen-cantidades").innerText = "0 artículos";
+        document.getElementById("monto-total").innerText = "$0.00";
+        return;
+      }
+      
+      let tot = 0;
+      let arts = 0;
+      carrito.forEach((item, index) => {
+        tot += (item.cantidad * item.precio);
+        arts += item.cantidad;
+        let d = document.createElement("div");
+        d.className = "cart-item";
+        d.innerHTML = `
+          <div>
+            <div style="font-size:14px; font-weight:600;">${item.descripcion}</div>
+            <div style="color:var(--text-muted); font-size:12px; margin-top:2px;">${item.cantidad} pzas • $${item.precio} c/u</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <span style="font-weight:700; font-size:15px;">$${item.cantidad * item.precio}</span>
+            <button class="btn-danger" onclick="eliminarArticulo(${index})">✕</button>
+          </div>`;
+        cont.appendChild(d);
+      });
+      document.getElementById("resumen-cantidades").innerText = arts + " artículos";
+      document.getElementById("monto-total").innerText = "$" + tot.toLocaleString('es-MX') + ".00";
+    }
+
+    function procesarCobro() {
+      if(carrito.length === 0) return;
+      fetch(URL_API_SHEETS, { method: "POST", mode: "no-cors", body: JSON.stringify({ accion: "cobrar", datos: carrito }) })
+      .then(() => {
+        alert("💵 ¡Cobro registrado con éxito!");
+        carrito = [];
+        renderizarCarrito();
+        cargarInventarioReal();
+      });
+    }
+
+    function verVentasMesActual() {
+      let cont = document.getElementById("tabla-ventas-contenido");
+      cont.innerHTML = "<p style='color:var(--text-muted); padding:10px 0;'>Consultando base de datos activa...</p>";
+      document.getElementById("card-tabla-ventas").style.display = "block";
+
+      fetch(URL_API_SHEETS + "?obtener=ventas_actuales")
+        .then(r => r.json())
+        .then(trans => {
+          if(trans.length === 0) { cont.innerHTML = "<p style='color:var(--text-muted);'>No hay ventas registradas en este mes.</p>"; return; }
+          let h = "<table style='width:100%; text-align:left; border-collapse:collapse; margin-top:8px;'>";
+          h += "<tr style='border-bottom:2px solid #e2e8f0; color:var(--text-muted); font-size:11px;'><th style='padding:6px 0;'>Fecha</th><th>Producto</th><th>Pzas</th><th>Total</th></tr>";
+          trans.forEach(t => {
+            h += `<tr style='border-bottom:1px solid #f1f5f9; height:38px;'><td>${t.fecha.split(" ")[0]}</td><td style='font-weight:500;'>${t.producto}</td><td>${t.cantidad}</td><td style='font-weight:700; color:var(--azul-tec);'>$${t.total}</td></tr>`;
+          });
+          h += "</table>";
+          cont.innerHTML = h;
+        }).catch(() => { cont.innerHTML = "<p style='color:#ef4444;'>Error de conexión con Sheets.</p>"; });
+    }
+  </script>
+</body>
+</html>
