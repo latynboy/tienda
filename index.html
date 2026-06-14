@@ -7,47 +7,45 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
-        :root { --azul: #002F6C; --verde: #82BC00; --bg: #f4f7f9; }
-        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); margin: 0; padding-bottom: 80px; }
-        
-        /* Navegación Premium */
-        .nav-bar { display: flex; position: fixed; bottom: 0; width: 100%; background: white; padding: 15px; border-top: 1px solid #ddd; }
-        .tab { flex: 1; text-align: center; font-weight: 700; color: #999; cursor: pointer; }
-        .tab.active { color: var(--azul); }
-        
-        /* Grid de Tarjetas */
-        .container { padding: 20px; display: none; }
-        .container.active { display: block; }
+        :root { --azul: #002F6C; --verde: #82BC00; --bg: #f8fafc; --shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; padding-bottom: 90px; }
+        .view { display: none; padding: 20px; }
+        .view.active { display: block; }
+        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: var(--shadow); margin-bottom: 20px; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: white; padding: 15px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        
-        /* UI Elementos */
-        input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #eee; margin: 5px 0; }
-        .btn-action { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--azul); color: white; font-weight: 700; margin-top: 10px; }
-        .btn-complete { background: var(--verde); }
+        input { width: 100%; padding: 14px; border: 1px solid #e2e8f0; border-radius: 12px; margin: 8px 0; }
+        button { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .btn-main { background: var(--azul); color: white; }
+        .btn-complete { background: var(--verde); color: white; }
+        .nav-bar { position: fixed; bottom: 0; width: 100%; display: flex; background: white; padding: 20px; border-top: 1px solid #edf2f7; }
+        .tab { flex: 1; text-align: center; font-weight: 700; color: #94a3b8; }
+        .tab.active { color: var(--azul); }
+        #modal-scanner { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 99; flex-direction: column; }
     </style>
 </head>
 <body>
 
-    <div id="view-inventario" class="container active">
+    <div id="view-inventario" class="view active">
         <h2>Inventario</h2>
-        <input type="text" id="busqueda-master" placeholder="🔍 Escanear o buscar producto...">
-        <div id="grid-productos" class="grid"></div>
+        <input type="text" id="busqueda-inv" placeholder="Escanear o buscar código...">
+        <div id="grid-inventario" class="grid"></div>
     </div>
 
-    <div id="view-vender" class="container">
-        <h2>Venta</h2>
-        <div id="carrito-lista"></div>
+    <div id="view-vender" class="view">
+        <h2>Vender</h2>
+        <input type="text" id="busqueda-venta" placeholder="Escanear producto...">
+        <div id="carrito-container"></div>
         <div class="card">
             <h3>Total: <span id="total-monto">$0.00</span></h3>
-            <button class="btn-action btn-complete" onclick="completarVenta()">COMPLETAR</button>
+            <button class="btn-complete" onclick="completarVenta()">COMPLETAR</button>
         </div>
     </div>
 
-    <div id="view-gestion" class="container">
+    <div id="view-gestion" class="view">
         <h2>Gestión</h2>
-        <button class="btn-action" onclick="exportarXLS()">📥 Descargar Reporte XLS</button>
+        <div class="card">
+            <button class="btn-main" onclick="descargarXLS()">📥 Descargar Reporte Mensual (XLS)</button>
+        </div>
     </div>
 
     <div class="nav-bar">
@@ -57,19 +55,39 @@
     </div>
 
     <script>
+        let carrito = [];
+        const URL_SHEETS = "TU_URL_AQUÍ";
+
         function switchView(id) {
-            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById('view-' + id).classList.add('active');
+            document.querySelectorAll('.tab').forEach((t, i) => {
+                t.classList.toggle('active', t.innerText.toLowerCase() === id);
+            });
         }
 
-        async function exportarXLS() {
-            // Lógica para generar el archivo XLS estructurado
-            window.location.href = "TU_URL_DE_APPS_SCRIPT_AQUÍ?accion=descargar_xls";
+        async function completarVenta() {
+            if(carrito.length === 0) return alert("Carrito vacío");
+            const res = await fetch(URL_SHEETS, { method: 'POST', body: JSON.stringify({ carrito }) });
+            if(res.ok) {
+                carrito = [];
+                document.getElementById('total-monto').innerText = "$0.00";
+                document.getElementById('carrito-container').innerHTML = "";
+                alert("Venta procesada correctamente");
+            }
         }
 
-        function completarVenta() {
-            // Lógica única de completar que descuenta y limpia
-            alert("Venta procesada y stock actualizado.");
+        async function descargarXLS() {
+            window.location.href = URL_SHEETS + "?accion=descargar_xls";
+        }
+
+        // Lógica de escaneo profesional
+        function initScanner(callback) {
+            document.getElementById('modal-scanner').style.display = 'flex';
+            new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 }).render(txt => {
+                document.getElementById('modal-scanner').style.display = 'none';
+                callback(txt);
+            });
         }
     </script>
 </body>
