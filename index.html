@@ -2,109 +2,99 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Inventario Institucional Premium</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/html5-qrcode"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema POS Profesional</title>
   <style>
-    /* Diseño original preservado */
-    :root { --azul-tec: #002F6C; --verde-milenio: #82BC00; --bg: #f8fafc; --surface: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border: #f1f5f9; }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { background-color: var(--bg); color: var(--text-main); }
-    .app-container { max-width: 460px; margin: 0 auto; background: var(--surface); min-height: 100vh; }
-    .header { background: linear-gradient(135deg, var(--azul-tec) 70%, var(--verde-milenio) 100%); color: white; padding: 24px 20px; font-weight: 700; }
-    .nav-tab { cursor: pointer; padding: 10px; text-align: center; }
-    .nav-tab.active { background: #eee; }
-    .view { display: none; padding: 20px; }
-    .view.active { display: block; }
-    .btn-main { background: var(--azul-tec); color: white; width: 100%; padding: 16px; border-radius: 14px; border: none; font-weight: 700; cursor: pointer; }
-    #modal-escaner { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; }
+    :root { --primary: #002F6C; --accent: #82BC00; }
+    body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 10px; background: #f0f2f5; }
+    .card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .row { display: flex; gap: 10px; margin-top: 10px; }
+    input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 5px; }
+    button { padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+    .btn-main { background: var(--primary); color: white; }
+    .btn-cart { background: var(--accent); color: white; }
+    .qty-ctrl { display: flex; align-items: center; gap: 10px; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
 
-<div class="app-container">
-  <div class="header">Gestión de Almacén</div>
-  
-  <div style="display:flex; border-bottom:1px solid #ccc;">
-    <div class="nav-tab active" onclick="cambiarPestaña('inventario')">Inventario</div>
-    <div class="nav-tab" onclick="cambiarPestaña('vender')">Vender</div>
-    <div class="nav-tab" onclick="cambiarPestaña('gestionar')">Gestionar</div>
+  <div class="card">
+    <h3>Inventario</h3>
+    <input type="text" id="inv-codigo" placeholder="Escanear o escribir código...">
+    <button class="btn-main" onclick="consultarInventario()">Consultar Disponibilidad</button>
+    <div id="inv-resultado" class="hidden">
+      <p id="inv-info"></p>
+      <input type="number" id="inv-ajuste" placeholder="Cantidad a sumar">
+      <button class="btn-main" onclick="actualizarInventario()">Confirmar Entrada</button>
+    </div>
   </div>
 
-  <div id="view-inventario" class="view active">
-    <input type="text" id="busqueda-inventario" placeholder="Buscar..." oninput="filtrarInventario()">
-    <div id="lista-inventario-cards"></div>
+  <div class="card">
+    <h3>Venta</h3>
+    <input type="text" id="venta-codigo" placeholder="Escanear producto para venta">
+    <button class="btn-cart" onclick="agregarAlCarrito()">Agregar al Carrito</button>
+    <div id="carrito-lista"></div>
+    <h3 id="total-venta">Total: $0.00</h3>
+    <button class="btn-main" onclick="procesarVenta()">Finalizar Venta</button>
   </div>
 
-  <div id="view-vender" class="view">
-    <button class="btn-main" onclick="abrirEscaner('carrito')">📷 ESCANEAR ARTÍCULO</button>
-    <div id="elementos-carrito"></div>
-    <button class="btn-main" style="margin-top:20px; background:var(--verde-milenio);" onclick="procesarCobro()">💵 COBRAR Y DESCONTAR</button>
-  </div>
+  <script>
+    const URL_API_SHEETS = "TU_URL_AQUÍ";
+    let carrito = [];
+    let stockActual = 0;
 
-  <div id="view-gestionar" class="view">
-    <button class="btn-main" onclick="verVentasMesActual()">📊 Ver Ventas del Mes</button>
-    <div id="tabla-ventas-contenido" style="margin-top:20px;"></div>
-  </div>
-</div>
-
-<div id="modal-escaner">
-  <button onclick="cerrarEscaner()" style="margin:20px;">CERRAR</button>
-  <div id="lector-camara" style="width:100%; height:300px;"></div>
-</div>
-
-<script>
-  const URL_API_SHEETS = "https://script.google.com/macros/s/AKfycbxsSsJDbg0KV_CoZI4xCoZjL4JNbOXhI2Cgk8FFXIkU-qg_tdd6NA7XskPW251Kloxx0g/exec";
-  let inventarioLocal = [], carrito = [];
-
-  // Al cargar, obtenemos los datos
-  window.onload = () => {
-    fetch(URL_API_SHEETS).then(r => r.json()).then(d => { inventarioLocal = d; renderizarInventario(d); });
-  };
-
-  function cambiarPestaña(id) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById('view-' + id).classList.add('active');
-  }
-
-  function abrirEscaner(ctx) {
-    document.getElementById('modal-escaner').style.display = 'block';
-    const scanner = new Html5QrcodeScanner("lector-camara", { fps: 10, qrbox: 250 });
-    scanner.render((txt) => {
-      if(ctx === 'carrito') agregarAlCarritoDirecto(txt);
-      cerrarEscaner();
-      scanner.clear();
-    });
-  }
-
-  function cerrarEscaner() { document.getElementById('modal-escaner').style.display = 'none'; }
-
-  function agregarAlCarritoDirecto(cod) {
-    let p = inventarioLocal.find(x => x.codigo === cod);
-    if(p) {
-      carrito.push(p);
-      document.getElementById("elementos-carrito").innerHTML += `<div>${p.descripcion}</div>`;
+    async function consultarInventario() {
+      const codigo = document.getElementById('inv-codigo').value;
+      const res = await fetch(`${URL_API_SHEETS}?accion=buscar&codigo=${codigo}`);
+      const data = await res.json();
+      stockActual = data.stock;
+      document.getElementById('inv-info').innerText = `Stock actual de ${data.descripcion}: ${data.stock} piezas.`;
+      document.getElementById('inv-resultado').classList.remove('hidden');
     }
-  }
 
-  function procesarCobro() {
-    fetch(URL_API_SHEETS, { method: "POST", mode: "no-cors", body: JSON.stringify({ accion: "cobrar", datos: carrito }) })
-      .then(() => { alert("Cobro registrado"); carrito = []; });
-  }
+    function agregarAlCarrito() {
+      const codigo = document.getElementById('venta-codigo').value;
+      const item = carrito.find(x => x.codigo === codigo);
+      if (item) {
+        item.cantidad++;
+      } else {
+        carrito.push({ codigo, cantidad: 1, precio: 100 }); // Ajusta según tu estructura
+      }
+      actualizarCarritoUI();
+    }
 
-  function verVentasMesActual() {
-    fetch(URL_API_SHEETS + "?obtener=ventas_actuales")
-      .then(r => r.json())
-      .then(data => {
-        let h = data.map(t => `<div>${t.fecha}: ${t.producto} - $${t.total}</div>`).join('');
-        document.getElementById("tabla-ventas-contenido").innerHTML = h;
+    function actualizarCarritoUI() {
+      const lista = document.getElementById('carrito-lista');
+      lista.innerHTML = '';
+      carrito.forEach((item, index) => {
+        lista.innerHTML += `
+          <div class="row">
+            <span>Cod: ${item.codigo}</span>
+            <div class="qty-ctrl">
+              <button onclick="modificarCantidad(${index}, -1)">-</button>
+              <span>${item.cantidad}</span>
+              <button onclick="modificarCantidad(${index}, 1)">+</button>
+            </div>
+          </div>`;
       });
-  }
-  
-  function renderizarInventario(arr) {
-     document.getElementById("lista-inventario-cards").innerHTML = arr.map(p => `<div>${p.descripcion} - Stock: ${p.stock}</div>`).join('');
-  }
-</script>
+    }
+
+    function modificarCantidad(index, delta) {
+      carrito[index].cantidad += delta;
+      if (carrito[index].cantidad <= 0) carrito.splice(index, 1);
+      actualizarCarritoUI();
+    }
+
+    async function procesarVenta() {
+      await fetch(URL_API_SHEETS, {
+        method: 'POST',
+        body: JSON.stringify({ accion: 'cobrar', carrito })
+      });
+      alert('Venta procesada con éxito');
+      carrito = [];
+      actualizarCarritoUI();
+    }
+  </script>
 </body>
 </html>
