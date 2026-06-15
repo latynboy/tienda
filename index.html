@@ -5,13 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Store</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/png" href="https://i.imgur.com/42o6HdN.png">
+  <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
     :root {
       --primary: #003D4D;
-      --primary-light: #0A5C6E;
       --accent: #1B998B;
       --danger: #D64545;
       --warning: #E6A817;
@@ -39,21 +38,20 @@
     
     .header {
       background: var(--surface);
-      padding: 10px 16px;
+      padding: 12px 20px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       box-shadow: var(--shadow);
       z-index: 100;
     }
-    .header-logo {
-      width: 28px;
-      height: 28px;
-      border-radius: 6px;
+    .header-icon {
+      font-size: 1.8rem;
+      color: var(--accent);
     }
     .header-title {
-      font-size: 1.1rem;
-      font-weight: 600;
+      font-size: 1.2rem;
+      font-weight: 700;
       color: var(--primary);
       letter-spacing: -0.3px;
     }
@@ -135,13 +133,13 @@
     }
     .product-item:last-child { border-bottom: none; }
     .product-info { flex: 1; }
-    .product-name { font-weight: 500; font-size: 0.9rem; }
-    .product-code { font-size: 0.75rem; color: var(--text-secondary); }
+    .product-id { font-size: 0.95rem; font-weight: 600; color: var(--text); }
+    .product-name { font-size: 0.85rem; color: var(--text-secondary); }
     .product-stock { font-size: 0.8rem; font-weight: 500; margin-top: 2px; }
     .stock-normal { color: #1B998B; }
     .stock-low { color: #E6A817; }
     .stock-critical { color: #D64545; }
-    .product-price { font-weight: 600; color: var(--primary); font-size: 0.95rem; }
+    .product-price { font-weight: 700; color: var(--primary); font-size: 1rem; }
     
     .cart-item {
       display: flex;
@@ -166,7 +164,6 @@
       box-shadow: var(--shadow-lg);
       text-align: center;
     }
-    .totals-label { font-size: 0.8rem; color: var(--text-secondary); }
     .totals-items { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 4px; }
     .totals-amount { font-size: 2rem; font-weight: 700; color: var(--primary); }
     
@@ -264,7 +261,7 @@
 <body>
 
 <div class="header">
-  <img src="https://i.imgur.com/42o6HdN.png" alt="Logo" class="header-logo">
+  <span class="header-icon">🛒</span>
   <span class="header-title">Store</span>
 </div>
 
@@ -385,10 +382,7 @@ function cambiarVista(v) {
 function cargarProductos() {
   fetch(URL_API)
     .then(r => r.json())
-    .then(d => {
-      productos = d;
-      renderizarProductos(d);
-    })
+    .then(d => { productos = d; renderizarProductos(d); })
     .catch(() => document.getElementById('lista-productos').innerHTML = '<p style="color:#D64545">Error al cargar</p>');
 }
 
@@ -400,15 +394,16 @@ function renderizarProductos(arr) {
     let stockMsg = p.stock <= 1 ? '⚠️ Últimas piezas' : (p.stock <= p.stockMinimo ? 'Stock bajo' : 'En existencia');
     return `<div class="product-item">
       <div class="product-info">
+        <div class="product-id">${p.id}</div>
         <div class="product-name">${p.descripcion}</div>
-        <div class="product-code">${p.id}</div>
-        <div class="product-stock ${stockClass}">${stockMsg}: ${p.stock} uds</div>
+        <div class="product-stock ${stockClass}">${stockMsg}: ${p.stock} pzas</div>
       </div>
       <div class="product-price">$${p.precio.toFixed(2)}</div>
     </div>`;
   }).join('');
 }
 
+// ─── BÚSQUEDA Y EDICIÓN ───
 document.getElementById('busqueda-producto').addEventListener('input', function() {
   let txt = this.value.toLowerCase().trim();
   if (!txt) { renderizarProductos(productos); document.getElementById('card-edicion').style.display = 'none'; return; }
@@ -439,16 +434,11 @@ function guardarProducto() {
   let stock = parseInt(document.getElementById('edit-stock').value) || 0;
   let precio = parseFloat(document.getElementById('edit-precio').value) || 0;
   if (!desc || stock <= 0 || precio <= 0) return mostrarToast('Completa todos los campos');
-  
   let existente = productos.find(p => p.id === codigoEdicion);
   let stockFinal = existente ? existente.stock + stock : stock;
-  
   fetch(URL_API, {
     method: 'POST',
-    body: JSON.stringify({
-      accion: 'guardar_producto',
-      datos: { id: codigoEdicion, descripcion: desc, precio: precio, stock: stockFinal, stockMinimo: 5 }
-    })
+    body: JSON.stringify({ accion: 'guardar_producto', datos: { id: codigoEdicion, descripcion: desc, precio: precio, stock: stockFinal, stockMinimo: 5 } })
   }).then(() => {
     mostrarToast('✅ Producto guardado');
     document.getElementById('card-edicion').style.display = 'none';
@@ -467,9 +457,7 @@ function cancelarEdicion() {
 function abrirEscaner(contexto) {
   document.getElementById('scanner-modal').style.display = 'flex';
   scanner = new Html5Qrcode("scanner-viewport");
-  scanner.start(
-    { facingMode: "environment" },
-    { fps: 15, qrbox: { width: 260, height: 150 } },
+  scanner.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 260, height: 150 } },
     (texto) => {
       if (navigator.vibrate) navigator.vibrate(80);
       cerrarEscaner();
@@ -480,17 +468,12 @@ function abrirEscaner(contexto) {
         document.getElementById('input-codigo-cobrar').value = texto;
         agregarAlCarrito();
       }
-    },
-    () => {}
-  );
+    }, () => {});
 }
 
 function cerrarEscaner() {
-  if (scanner) {
-    scanner.stop().then(() => { document.getElementById('scanner-modal').style.display = 'none'; });
-  } else {
-    document.getElementById('scanner-modal').style.display = 'none';
-  }
+  if (scanner) { scanner.stop().then(() => document.getElementById('scanner-modal').style.display = 'none'); }
+  else document.getElementById('scanner-modal').style.display = 'none';
 }
 
 // ─── CARRITO ───
@@ -500,11 +483,9 @@ function agregarAlCarrito() {
   let p = productos.find(x => x.id === cod);
   let nombre = p ? p.descripcion : 'Desconocido';
   let precio = p ? p.precio : 0;
-  
   let enCarrito = carrito.find(x => x.id === cod);
-  if (enCarrito) { enCarrito.cantidad++; }
-  else { carrito.push({ id: cod, descripcion: nombre, cantidad: 1, precio: precio }); }
-  
+  if (enCarrito) enCarrito.cantidad++;
+  else carrito.push({ id: cod, descripcion: nombre, cantidad: 1, precio: precio });
   document.getElementById('input-codigo-cobrar').value = '';
   renderizarCarrito();
 }
@@ -520,23 +501,18 @@ function cambiarCantidad(id, delta) {
 function renderizarCarrito() {
   let c = document.getElementById('lista-carrito');
   let totalArt = 0, totalMon = 0;
-  
   if (!carrito.length) {
     c.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🛒</div>Sin productos</div>';
     document.getElementById('total-articulos').textContent = '📦 0 artículos';
     document.getElementById('total-monto').textContent = '$0';
     return;
   }
-  
   c.innerHTML = carrito.map(item => {
     let subt = item.cantidad * item.precio;
     totalArt += item.cantidad;
     totalMon += subt;
     return `<div class="cart-item">
-      <div class="cart-info">
-        <div class="cart-name">${item.descripcion}</div>
-        <div class="cart-unit-price">$${item.precio.toFixed(2)} c/u</div>
-      </div>
+      <div class="cart-info"><div class="cart-name">${item.descripcion}</div><div class="cart-unit-price">$${item.precio.toFixed(2)} c/u</div></div>
       <div class="cart-controls">
         <button class="btn btn-outline btn-sm" onclick="cambiarCantidad('${item.id}', -1)">−</button>
         <span class="cart-qty">${item.cantidad}</span>
@@ -545,7 +521,6 @@ function renderizarCarrito() {
       <div class="cart-subtotal">$${subt.toFixed(2)}</div>
     </div>`;
   }).join('');
-  
   document.getElementById('total-articulos').textContent = `📦 ${totalArt} artículos`;
   document.getElementById('total-monto').textContent = `$${totalMon.toFixed(2)}`;
 }
@@ -553,16 +528,8 @@ function renderizarCarrito() {
 function cobrar() {
   if (!carrito.length) return mostrarToast('Ticket vacío');
   if (!confirm(`¿Confirmar cobro por $${document.getElementById('total-monto').textContent.replace('$','')}?`)) return;
-  
-  fetch(URL_API, {
-    method: 'POST',
-    body: JSON.stringify({ accion: 'cobrar', datos: carrito })
-  }).then(() => {
-    mostrarToast('✅ Venta registrada');
-    carrito = [];
-    renderizarCarrito();
-    cargarProductos();
-  });
+  fetch(URL_API, { method: 'POST', body: JSON.stringify({ accion: 'cobrar', datos: carrito }) })
+    .then(() => { mostrarToast('✅ Venta registrada'); carrito = []; renderizarCarrito(); cargarProductos(); });
 }
 
 // ─── REGISTROS ───
@@ -571,8 +538,7 @@ function cargarArchivos() {
     .then(r => r.json())
     .then(d => {
       let c = document.getElementById('lista-archivos');
-      if (!d.length) { c.innerHTML = '<p style="color:#999">Sin archivos históricos</p>'; return; }
-      c.innerHTML = d.map(a => `<div style="padding:8px 0;border-bottom:1px solid #eee;">📁 ${a}</div>`).join('');
+      c.innerHTML = d.length ? d.map(a => `<div style="padding:8px 0;">📁 ${a}</div>`).join('') : '<p style="color:#999">Sin archivos</p>';
     });
 }
 
@@ -582,20 +548,13 @@ function verVentasActuales() {
     .then(d => {
       document.getElementById('card-ventas').style.display = 'block';
       let c = document.getElementById('tabla-ventas');
-      if (!d.length) { c.innerHTML = '<p style="color:#999">Sin ventas este mes</p>'; return; }
-      c.innerHTML = `<table style="width:100%;border-collapse:collapse;">${d.map(t => 
-        `<tr style="border-bottom:1px solid #eee;"><td style="padding:6px;">${t.fecha}</td><td>${t.producto}</td><td>${t.cantidad}</td><td><strong>$${t.total}</strong></td></tr>`
-      ).join('')}</table>`;
+      c.innerHTML = d.length ? `<table style="width:100%;">${d.map(t => `<tr style="border-bottom:1px solid #eee;"><td>${t.fecha}</td><td>${t.producto}</td><td>${t.cantidad}</td><td><strong>$${t.total}</strong></td></tr>`).join('')}</table>` : '<p style="color:#999">Sin ventas este mes</p>';
     });
 }
 
 function descargarActual() {
-  fetch(URL_API, {
-    method: 'POST',
-    body: JSON.stringify({ accion: 'descargar_actual' })
-  })
-  .then(r => r.json())
-  .then(d => window.open(d.url, '_blank'));
+  fetch(URL_API, { method: 'POST', body: JSON.stringify({ accion: 'descargar_actual' }) })
+    .then(r => r.json()).then(d => window.open(d.url, '_blank'));
 }
 </script>
 </body>
