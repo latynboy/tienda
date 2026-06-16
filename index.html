@@ -48,13 +48,13 @@
       box-shadow: var(--shadow);
       z-index: 100;
     }
-    .header-left { display: flex; align-items: center; gap: 10px; }
+    .header-left { display: flex; align-items: center; gap: 8px; }
     .header-logo-box {
-      width: 36px; height: 36px; border-radius: 10px;
+      width: 34px; height: 34px; border-radius: 9px;
       background: var(--primary); display: flex;
       align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .header-logo { width: 20px; height: 20px; object-fit: contain; filter: brightness(0) invert(1); }
+    .header-logo { width: 18px; height: 18px; object-fit: contain; filter: brightness(0) invert(1); }
     .header-title { font-size: 1.05rem; font-weight: 700; color: var(--primary); }
     .header-user { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 500; color: var(--text-secondary); }
     
@@ -229,7 +229,6 @@
 </head>
 <body>
 
-<!-- BIENVENIDA -->
 <div id="vista-bienvenida" class="view active">
   <div class="welcome-box">
     <div style="font-size:3rem;margin-bottom:10px;">👋</div>
@@ -240,7 +239,6 @@
   </div>
 </div>
 
-<!-- APP -->
 <div id="vista-app" class="view">
   <div class="header">
     <div class="header-left">
@@ -255,12 +253,7 @@
 
   <div class="main-content">
     <div id="vista-productos" class="view active">
-      <div class="card">
-        <div class="input-row">
-          <input type="text" id="busqueda-producto" placeholder="Código o nombre...">
-          <button class="btn btn-primary btn-icon" onclick="abrirEscaner('productos')">📷</button>
-        </div>
-      </div>
+      <div class="card"><div class="input-row"><input type="text" id="busqueda-producto" placeholder="Código o nombre..."><button class="btn btn-primary btn-icon" onclick="abrirEscaner('productos')">📷</button></div></div>
       <div class="card" id="card-edicion" style="display:none;">
         <div class="card-header" id="titulo-edicion">Producto</div>
         <div style="margin-bottom:6px;"><label style="font-size:0.75rem;color:var(--text-secondary);">ID / Descripción</label><input type="text" id="edit-id-desc" disabled style="width:100%;"></div>
@@ -274,11 +267,9 @@
     </div>
     
     <div id="vista-cobrar" class="view">
-      <div class="card">
-        <div class="input-row"><input type="text" id="input-codigo-cobrar" placeholder="Escanea o código..."><button class="btn btn-primary btn-icon" onclick="abrirEscaner('cobrar')">📷</button></div>
-        <button class="btn btn-accent" style="width:100%;margin-top:5px;" onclick="agregarAlCarrito()">Agregar</button>
-      </div>
-      <div class="card"><div class="card-header">🧾 Ticket</div><div id="lista-carrito"><div class="empty-state"><div class="empty-state-icon">🛒</div>Vacío</div></div></div>
+      <div class="card"><div class="input-row"><input type="text" id="input-codigo-cobrar" placeholder="Escanea o código..."><button class="btn btn-primary btn-icon" onclick="abrirEscaner('cobrar')">📷</button></div>
+        <button class="btn btn-accent" style="width:100%;margin-top:5px;" onclick="agregarAlCarrito()">Agregar</button></div>
+      <div class="card"><div class="card-header">🧾 Ticket</div><div id="lista-carrito"><div class="empty-state">🛒 Vacío</div></div></div>
       <div class="totals-bar"><div class="totals-items" id="total-articulos">📦 0 artículos</div><div class="totals-amount" id="total-monto">$0</div><button class="btn btn-primary" style="width:100%;margin-top:8px;font-size:1rem;" onclick="cobrar()">💳 Cobrar</button></div>
     </div>
     
@@ -286,8 +277,7 @@
       <div class="card" style="text-align:center;"><div style="font-size:2rem;">📋</div><div class="card-header">Registros</div>
         <button class="btn btn-primary" style="width:100%;" onclick="verVentas('TEC')">🏛️ Ventas TEC</button>
         <button class="btn btn-outline" style="width:100%;margin-top:5px;" onclick="verVentas('MILENIO')">🎓 Ventas MILENIO</button>
-        <button class="btn btn-outline" style="width:100%;margin-top:5px;" onclick="descargarActual()">📥 Descargar Excel</button>
-      </div>
+        <button class="btn btn-outline" style="width:100%;margin-top:5px;" onclick="descargarActual()">📥 Descargar Excel</button></div>
       <div class="card" id="card-ventas" style="display:none;"><div class="card-header" id="titulo-ventas">📊 Transacciones</div><div id="tabla-ventas" style="font-size:0.75rem;"></div></div>
       <div class="card"><div class="card-header">📁 Archivos anteriores</div><div id="lista-archivos">...</div></div>
     </div>
@@ -303,7 +293,6 @@
 <div id="scanner-modal"><div id="scanner-viewport"><div class="laser-line"></div></div><button id="close-scanner" onclick="cerrarEscaner()">✕</button></div>
 <div class="toast" id="toast"></div>
 
-<!-- MODAL DE COBRO -->
 <div class="modal-overlay" id="modal-confirm">
   <div class="modal-box">
     <div class="modal-icon">💳</div>
@@ -329,13 +318,9 @@ let codigoEdicion = '';
 let usuarioActual = '';
 let tipoPagoSeleccionado = 'Efectivo';
 
-// ─── INICIO ───
 window.onload = function() {
   usuarioActual = localStorage.getItem('store_usuario') || '';
-  if (usuarioActual) {
-    mostrarApp();
-    cargarProductos();
-  }
+  if (usuarioActual) { mostrarApp(); cargarProductos(); }
 };
 
 function guardarUsuario() {
@@ -374,13 +359,9 @@ function cambiarVista(v) {
   if (v === 'registros') cargarArchivos();
 }
 
-// ─── PRODUCTOS ───
 function cargarProductos() {
-  fetch(URL_API).then(r => r.json()).then(d => {
-    productos = d;
-    renderizarProductos(d);
-    actualizarBadge(d);
-  }).catch(() => document.getElementById('lista-productos').innerHTML = '<p style="color:#D64545">Error</p>');
+  fetch(URL_API).then(r => r.json()).then(d => { productos = d; renderizarProductos(d); actualizarBadge(d); })
+    .catch(() => document.getElementById('lista-productos').innerHTML = '<p style="color:#D64545">Error</p>');
 }
 
 function actualizarBadge(arr) {
@@ -399,12 +380,7 @@ function renderizarProductos(arr) {
     let sc = stock <= 1 ? 'stock-critical' : (stock <= 5 ? 'stock-low' : 'stock-normal');
     let sm = stock <= 1 ? '⚠️ Últimas' : (stock <= 5 ? 'Stock bajo' : 'En existencia');
     return `<div class="product-item${stock <= 1 ? ' critical' : ''}">
-      <div class="product-info">
-        <div class="product-id">${p.id}</div>
-        <div class="product-name">${p.descripcion}</div>
-        <span class="product-cat">${p.categoria || 'TEC'}</span>
-        <div class="product-stock ${sc}">${sm}: ${stock} pzas</div>
-      </div>
+      <div class="product-info"><div class="product-id">${p.id}</div><div class="product-name">${p.descripcion}</div><span class="product-cat">${p.categoria || 'TEC'}</span><div class="product-stock ${sc}">${sm}: ${stock} pzas</div></div>
       <div class="product-price">$${precio.toFixed(2)}</div></div>`;
   }).join('');
 }
@@ -456,7 +432,6 @@ function guardarProducto() {
 
 function cancelarEdicion() { document.getElementById('card-edicion').style.display = 'none'; document.getElementById('busqueda-producto').value = ''; renderizarProductos(productos); }
 
-// ─── ESCÁNER ───
 function abrirEscaner(ctx) {
   document.getElementById('scanner-modal').style.display = 'flex';
   scanner = new Html5Qrcode("scanner-viewport");
@@ -468,7 +443,6 @@ function abrirEscaner(ctx) {
 }
 function cerrarEscaner() { scanner&&scanner.stop().then(()=>document.getElementById('scanner-modal').style.display='none'); }
 
-// ─── CARRITO ───
 function agregarAlCarrito() {
   let cod = document.getElementById('input-codigo-cobrar').value.trim();
   if(!cod) return mostrarToast('Código requerido');
@@ -511,43 +485,25 @@ function eliminarItem(id) { carrito = carrito.filter(x=>x.id!==id); renderizarCa
 function renderizarCarrito() {
   let c=document.getElementById('lista-carrito'), ta=0, tm=0;
   if(!carrito.length){ c.innerHTML='<div class="empty-state">🛒 Vacío</div>'; document.getElementById('total-articulos').textContent='📦 0 artículos'; document.getElementById('total-monto').textContent='$0'; return; }
-  
-  // Agrupar por categoría
-  let tec = carrito.filter(x=>x.categoria==='TEC');
-  let mil = carrito.filter(x=>x.categoria==='MILENIO');
-  let html = '';
-  let mostrarCategorias = tec.length > 0 && mil.length > 0;
-  
+  let tec = carrito.filter(x=>x.categoria==='TEC'), mil = carrito.filter(x=>x.categoria==='MILENIO');
+  let html = '', mostrarCategorias = tec.length > 0 && mil.length > 0;
   function renderGrupo(items, titulo, emoji) {
-    let h = '';
-    let subt = 0;
-    if (mostrarCategorias && items.length > 0) {
-      h += `<div class="cart-category-header">${emoji} ${titulo}</div>`;
-    }
+    let h = '', subt = 0;
+    if (mostrarCategorias && items.length > 0) h += `<div class="cart-category-header">${emoji} ${titulo}</div>`;
     items.forEach(item => {
-      let sub = item.cantidad * Number(item.precio);
-      subt += sub; ta += item.cantidad; tm += sub;
-      h += `<div class="cart-item">
-        <div class="cart-info"><div class="cart-id">${item.id}</div><div class="cart-name">${item.descripcion}</div><div class="cart-unit">$${Number(item.precio).toFixed(2)} c/u</div></div>
-        <div class="cart-controls"><button class="btn btn-outline btn-sm" onclick="cambiarCantidad('${item.id}',-1)">−</button><input class="cart-qty" value="${item.cantidad}" onchange="editarCantidad('${item.id}',this)"><button class="btn btn-outline btn-sm" onclick="cambiarCantidad('${item.id}',1)">+</button></div>
-        <div class="cart-subtotal">$${sub.toFixed(2)}</div>
-        <button class="btn-delete" onclick="eliminarItem('${item.id}')">✕</button></div>`;
+      let sub = item.cantidad * Number(item.precio); subt += sub; ta += item.cantidad; tm += sub;
+      h += `<div class="cart-item"><div class="cart-info"><div class="cart-id">${item.id}</div><div class="cart-name">${item.descripcion}</div><div class="cart-unit">$${Number(item.precio).toFixed(2)} c/u</div></div><div class="cart-controls"><button class="btn btn-outline btn-sm" onclick="cambiarCantidad('${item.id}',-1)">−</button><input class="cart-qty" value="${item.cantidad}" onchange="editarCantidad('${item.id}',this)"><button class="btn btn-outline btn-sm" onclick="cambiarCantidad('${item.id}',1)">+</button></div><div class="cart-subtotal">$${sub.toFixed(2)}</div><button class="btn-delete" onclick="eliminarItem('${item.id}')">✕</button></div>`;
     });
-    if (mostrarCategorias && items.length > 0) {
-      h += `<div class="cart-category-subtotal">Subtotal ${titulo}: $${subt.toFixed(2)}</div>`;
-    }
+    if (mostrarCategorias && items.length > 0) h += `<div class="cart-category-subtotal">Subtotal ${titulo}: $${subt.toFixed(2)}</div>`;
     return h;
   }
-  
   html += renderGrupo(tec, 'Tec de Monterrey', '🏛️');
   html += renderGrupo(mil, 'Tec Milenio', '🎓');
-  
   c.innerHTML = html;
   document.getElementById('total-articulos').textContent = `📦 ${ta} artículos`;
   document.getElementById('total-monto').textContent = `$${tm.toFixed(2)}`;
 }
 
-// ─── COBRO ───
 function seleccionarPago(el, tipo) {
   document.querySelectorAll('.payment-btn').forEach(b => b.classList.remove('selected'));
   el.classList.add('selected');
@@ -558,9 +514,7 @@ function cobrar() {
   if(!carrito.length) return mostrarToast('Vacío');
   if(!requiereUsuario()) return;
   let total = document.getElementById('total-monto').textContent.replace('$','');
-  if (tipoPagoSeleccionado === 'Empleado') {
-    total = (parseFloat(total) * 0.8).toFixed(2);
-  }
+  if (tipoPagoSeleccionado === 'Empleado') total = (parseFloat(total) * 0.8).toFixed(2);
   document.getElementById('modal-monto').textContent = 'Total: $' + total + (tipoPagoSeleccionado === 'Empleado' ? ' (-20%)' : '');
   document.getElementById('modal-confirm').style.display = 'flex';
 }
@@ -569,27 +523,16 @@ function cerrarModal() { document.getElementById('modal-confirm').style.display 
 
 function ejecutarCobro() {
   cerrarModal();
-  // Aplicar descuento si es empleado
   let carritoCobro = carrito.map(item => {
     let precio = tipoPagoSeleccionado === 'Empleado' ? Number(item.precio) * 0.8 : Number(item.precio);
     return {...item, precio};
   });
-  
   fetch(URL_API, { method: 'POST', body: JSON.stringify({ accion: 'cobrar', vendedor: usuarioActual, tipoPago: tipoPagoSeleccionado, datos: carritoCobro }) })
     .then(() => { mostrarToast('✅ Venta registrada'); carrito = []; renderizarCarrito(); cargarProductos(); });
 }
 
-// ─── REGISTROS ───
 function cargarArchivos(){ fetch(URL_API+'?obtener=archivos').then(r=>r.json()).then(d=>{ document.getElementById('lista-archivos').innerHTML=d.length?d.map(a=>`<div>📁 ${a}</div>`).join(''):'<p>Sin archivos</p>'; }); }
-
-function verVentas(cat) {
-  fetch(URL_API+'?obtener=ventas_'+cat).then(r=>r.json()).then(d=>{
-    document.getElementById('card-ventas').style.display='block';
-    document.getElementById('titulo-ventas').textContent='📊 '+ (cat==='TEC'?'Tec de Monterrey':'Tec Milenio');
-    document.getElementById('tabla-ventas').innerHTML=d.length?`<table style="width:100%;font-size:0.7rem;">${d.map(t=>`<tr style="border-bottom:1px solid #eee;"><td>${t.fecha}</td><td>${t.producto}</td><td>${t.cantidad}</td><td>$${t.total}</td><td style="font-size:0.65rem;color:#666;">${t.vendedor||''}</td><td style="font-size:0.6rem;color:#999;">${t.tipoPago||''}</td></tr>`).join('')}</table>`:'<p style="color:#999">Sin ventas</p>';
-  });
-}
-
+function verVentas(cat){ fetch(URL_API+'?obtener=ventas_'+cat).then(r=>r.json()).then(d=>{ document.getElementById('card-ventas').style.display='block'; document.getElementById('titulo-ventas').textContent='📊 '+ (cat==='TEC'?'Tec de Monterrey':'Tec Milenio'); document.getElementById('tabla-ventas').innerHTML=d.length?`<table style="width:100%;font-size:0.7rem;">${d.map(t=>`<tr style="border-bottom:1px solid #eee;"><td>${t.fecha}</td><td>${t.producto}</td><td>${t.cantidad}</td><td>$${t.total}</td><td style="font-size:0.65rem;color:#666;">${t.vendedor||''}</td><td style="font-size:0.6rem;color:#999;">${t.tipoPago||''}</td></tr>`).join('')}</table>`:'<p style="color:#999">Sin ventas</p>'; }); }
 function descargarActual(){ fetch(URL_API,{method:'POST',body:JSON.stringify({accion:'descargar_actual'})}).then(r=>r.json()).then(d=>window.open(d.url,'_blank')); }
 </script>
 </body>
