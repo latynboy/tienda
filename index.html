@@ -88,7 +88,7 @@
     .btn-accent { background: var(--accent); color: white; }
     .btn-outline { background: transparent; border: 1.5px solid var(--primary); color: var(--primary); }
     .btn-icon { width: 36px; height: 36px; padding: 0; border-radius: 10px; font-size: 1rem; flex-shrink: 0; }
-    .btn-sm { padding: 3px 7px; font-size: 0.7rem; border-radius: 6px; min-width: 24px; }
+    .btn-sm { padding: 2px 5px; font-size: 0.65rem; border-radius: 5px; min-width: 20px; }
     
     .product-item {
       display: flex; justify-content: space-between; align-items: center;
@@ -112,37 +112,39 @@
     .product-cat { font-size: 0.65rem; background: #E8F5E9; color: #1B998B; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 2px; }
     
     .cart-item {
-      display: flex; align-items: center; gap: 6px;
-      padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.76rem;
+      display: flex; align-items: center; gap: 4px;
+      padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.7rem;
     }
     .cart-info { flex: 1; min-width: 0; }
-    .cart-id { font-size: 0.8rem; font-weight: 600; }
-    .cart-name { font-size: 0.73rem; color: var(--text-secondary); }
-    .cart-unit { font-size: 0.7rem; color: var(--text-secondary); }
-    .cart-controls { display: flex; align-items: center; gap: 3px; }
+    .cart-id { font-size: 0.72rem; font-weight: 600; }
+    .cart-name { font-size: 0.68rem; color: var(--text-secondary); }
+    .cart-unit { font-size: 0.65rem; color: var(--text-secondary); }
+    .cart-controls { display: flex; align-items: center; gap: 2px; }
     .cart-qty {
-      width: 36px; text-align: center; font-weight: 600; font-size: 0.78rem;
-      border: 1px solid var(--border); border-radius: 6px; padding: 4px; background: var(--bg);
+      width: 28px; text-align: center; font-weight: 600; font-size: 0.7rem;
+      border: 1px solid var(--border); border-radius: 4px; padding: 2px; background: var(--bg);
     }
-    .cart-subtotal { font-weight: 600; color: var(--primary); min-width: 48px; text-align: right; font-size: 0.8rem; }
+    .cart-subtotal { font-weight: 600; color: var(--primary); min-width: 40px; text-align: right; font-size: 0.7rem; }
     .btn-delete {
-      background: none; border: none; color: #ccc; font-size: 0.85rem;
-      cursor: pointer; padding: 4px 6px; border-radius: 50%; flex-shrink: 0;
+      background: none; border: none; color: #ccc; font-size: 0.7rem;
+      cursor: pointer; padding: 2px 4px; border-radius: 50%; flex-shrink: 0;
     }
     .btn-delete:active { color: var(--danger); background: #FFF0F0; }
     
+    #lista-carrito { max-height: 280px; overflow-y: auto; }
+    
     .cart-category-header {
-      font-size: 0.75rem; font-weight: 600; padding: 6px 0; margin-top: 4px;
+      font-size: 0.7rem; font-weight: 600; padding: 4px 0; margin-top: 2px;
       color: var(--primary); border-bottom: 2px solid var(--accent);
     }
-    .cart-category-subtotal { font-size: 0.75rem; color: var(--text-secondary); text-align: right; padding: 4px 0; }
+    .cart-category-subtotal { font-size: 0.68rem; color: var(--text-secondary); text-align: right; padding: 2px 0; }
     
     .totals-bar {
       background: var(--surface); border-radius: var(--radius);
-      padding: 14px; margin-top: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); text-align: center;
+      padding: 12px; margin-top: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); text-align: center;
     }
-    .totals-items { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 3px; }
-    .totals-amount { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
+    .totals-items { font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 2px; }
+    .totals-amount { font-size: 1.6rem; font-weight: 700; color: var(--primary); }
     
     .bottom-nav {
       position: fixed; bottom: 0; left: 0; width: 100%;
@@ -182,8 +184,7 @@
     @keyframes laser { 0%,100%{top:20%;} 50%{top:80%;} }
     #close-scanner { margin-top: 18px; background: none; border: none; color: white; font-size: 1.8rem; cursor: pointer; }
     
-    .empty-state { text-align: center; padding: 25px; color: var(--text-secondary); font-size: 0.82rem; }
-    .empty-state-icon { font-size: 2rem; margin-bottom: 6px; }
+    .empty-state { text-align: center; padding: 15px; color: var(--text-secondary); font-size: 0.78rem; }
     
     .toast {
       position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
@@ -266,15 +267,15 @@
       <div class="card"><div class="card-header">📦 Catálogo</div><div id="lista-productos">Cargando...</div></div>
     </div>
     
-    <div id="vista-cobrar" class="view">
-      <div class="card"><div class="input-row"><input type="text" id="input-codigo-cobrar" placeholder="Escanea o código..."><button class="btn btn-primary btn-icon" onclick="abrirEscaner('cobrar')">📷</button></div>
+    <div id="vista-vender" class="view">
+      <div class="card"><div class="input-row"><input type="text" id="input-codigo-vender" placeholder="Escanea o código..."><button class="btn btn-primary btn-icon" onclick="abrirEscaner('vender')">📷</button></div>
         <button class="btn btn-accent" style="width:100%;margin-top:5px;" onclick="agregarAlCarrito()">Agregar</button></div>
       <div class="card"><div class="card-header">🧾 Ticket</div><div id="lista-carrito"><div class="empty-state">🛒 Vacío</div></div></div>
-      <div class="totals-bar"><div class="totals-items" id="total-articulos">📦 0 artículos</div><div class="totals-amount" id="total-monto">$0</div><button class="btn btn-primary" style="width:100%;margin-top:8px;font-size:1rem;" onclick="cobrar()">💳 Cobrar</button></div>
+      <div class="totals-bar"><div class="totals-items" id="total-articulos">📦 0 artículos</div><div class="totals-amount" id="total-monto">$0</div><button class="btn btn-primary" style="width:100%;margin-top:6px;font-size:1rem;" onclick="cobrar()">💳 Cobrar</button></div>
     </div>
     
-    <div id="vista-registros" class="view">
-      <div class="card" style="text-align:center;"><div style="font-size:2rem;">📋</div><div class="card-header">Registros</div>
+    <div id="vista-historial" class="view">
+      <div class="card" style="text-align:center;"><div style="font-size:2rem;">📋</div><div class="card-header">Historial</div>
         <button class="btn btn-outline" style="width:100%;" onclick="verVentas('TEC')">🏛️ Ventas TEC</button>
         <button class="btn btn-outline" style="width:100%;margin-top:5px;" onclick="verVentas('MILENIO')">🎓 Ventas MILENIO</button>
         <button class="btn btn-outline" style="width:100%;margin-top:5px;" onclick="descargarActual()">📥 Descargar Excel</button></div>
@@ -285,8 +286,8 @@
 
   <nav class="bottom-nav">
     <div class="nav-item active" id="nav-productos" onclick="cambiarVista('productos')"><span class="badge" id="badge-criticos">0</span><span class="nav-icon">📦</span>Productos</div>
-    <div class="nav-item" id="nav-cobrar" onclick="cambiarVista('cobrar')"><span class="nav-icon">💳</span>Cobrar</div>
-    <div class="nav-item" id="nav-registros" onclick="cambiarVista('registros')"><span class="nav-icon">📋</span>Registros</div>
+    <div class="nav-item" id="nav-vender" onclick="cambiarVista('vender')"><span class="nav-icon">💳</span>Vender</div>
+    <div class="nav-item" id="nav-historial" onclick="cambiarVista('historial')"><span class="nav-icon">📋</span>Historial</div>
   </nav>
 </div>
 
@@ -338,10 +339,7 @@ function mostrarApp() {
   document.getElementById('nombre-usuario-header').textContent = usuarioActual;
 }
 
-function requiereUsuario() {
-  if (!usuarioActual) { mostrarToast('⚠️ Selecciona un usuario primero'); return false; }
-  return true;
-}
+function requiereUsuario() { if(!usuarioActual){ mostrarToast('⚠️ Selecciona un usuario'); return false; } return true; }
 
 function mostrarToast(m) {
   let t = document.getElementById('toast');
@@ -355,8 +353,8 @@ function cambiarVista(v) {
   document.getElementById('vista-' + v).classList.add('active');
   document.getElementById('nav-' + v).classList.add('active');
   if (v === 'productos') cargarProductos();
-  if (v === 'cobrar') renderizarCarrito();
-  if (v === 'registros') cargarArchivos();
+  if (v === 'vender') renderizarCarrito();
+  if (v === 'historial') cargarArchivos();
 }
 
 function cargarProductos() {
@@ -438,13 +436,13 @@ function abrirEscaner(ctx) {
   scanner.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 230, height: 130 } },
     (txt) => { navigator.vibrate&&navigator.vibrate(80); cerrarEscaner();
       if (ctx==='productos') { document.getElementById('busqueda-producto').value=txt; document.getElementById('busqueda-producto').dispatchEvent(new Event('input')); }
-      else { document.getElementById('input-codigo-cobrar').value=txt; agregarAlCarrito(); }
+      else { document.getElementById('input-codigo-vender').value=txt; agregarAlCarrito(); }
     }, () => {});
 }
 function cerrarEscaner() { scanner&&scanner.stop().then(()=>document.getElementById('scanner-modal').style.display='none'); }
 
 function agregarAlCarrito() {
-  let cod = document.getElementById('input-codigo-cobrar').value.trim();
+  let cod = document.getElementById('input-codigo-vender').value.trim();
   if(!cod) return mostrarToast('Código requerido');
   let p = productos.find(x=>x.id===cod);
   let nombre = p?p.descripcion:'?', precio = p?Number(p.precio):0, cat = p?p.categoria:'TEC';
@@ -454,7 +452,7 @@ function agregarAlCarrito() {
     if(existe.cantidad >= stockDisp) return mostrarToast(stockDisp<=1?'⚠️ ¡Última pieza!':'⚠️ Stock máximo: '+stockDisp);
     existe.cantidad++;
   } else carrito.push({id:cod,descripcion:nombre,cantidad:1,precio,categoria:cat});
-  document.getElementById('input-codigo-cobrar').value='';
+  document.getElementById('input-codigo-vender').value='';
   renderizarCarrito();
 }
 
