@@ -44,40 +44,26 @@
       padding: 10px 16px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: space-between;
       box-shadow: var(--shadow);
       z-index: 100;
     }
+    .header-left { display: flex; align-items: center; gap: 10px; }
     .header-logo-box {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--primary); display: flex;
+      align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .header-logo {
-      width: 20px;
-      height: 20px;
-      object-fit: contain;
-      filter: brightness(0) invert(1);
-    }
-    .header-title { font-size: 1.05rem; font-weight: 700; color: var(--primary); letter-spacing: -0.2px; }
+    .header-logo { width: 20px; height: 20px; object-fit: contain; filter: brightness(0) invert(1); }
+    .header-title { font-size: 1.05rem; font-weight: 700; color: var(--primary); }
+    .header-user { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 500; color: var(--text-secondary); }
     
     .main-content { flex: 1; overflow-y: auto; padding: 10px; padding-bottom: 75px; }
     .view { display: none; animation: fadeIn 0.2s ease; }
     .view.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     
-    .card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      padding: 12px;
-      margin-bottom: 8px;
-      box-shadow: var(--shadow);
-    }
+    .card { background: var(--surface); border-radius: var(--radius); padding: 12px; margin-bottom: 8px; box-shadow: var(--shadow); }
     .card-header { font-size: 0.88rem; font-weight: 600; margin-bottom: 8px; }
     
     .input-row { display: flex; gap: 5px; align-items: center; margin-bottom: 8px; }
@@ -106,18 +92,14 @@
     
     .product-item {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 10px; margin-bottom: 2px;
-      border-bottom: 1px solid var(--border);
-      border-radius: 8px;
+      padding: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--border); border-radius: 8px;
     }
     .product-item.critical {
-      border: 2px solid var(--danger);
-      animation: pulseBorder 1.8s ease-in-out infinite;
-      background: #FFF5F5;
+      border: 2px solid var(--danger); animation: pulseBorder 1.8s ease-in-out infinite; background: #FFF5F5;
     }
     @keyframes pulseBorder {
-      0%, 100% { border-color: var(--danger); box-shadow: 0 0 0 rgba(214,69,69,0); }
-      50% { border-color: #FF6B6B; box-shadow: 0 0 12px rgba(214,69,69,0.25); }
+      0%,100%{border-color:var(--danger);box-shadow:0 0 0 rgba(214,69,69,0);}
+      50%{border-color:#FF6B6B;box-shadow:0 0 12px rgba(214,69,69,0.25);}
     }
     .product-info { flex: 1; }
     .product-id { font-size: 0.85rem; font-weight: 600; }
@@ -127,13 +109,12 @@
     .stock-low { color: #E6A817; }
     .stock-critical { color: #D64545; font-weight: 600; }
     .product-price { font-weight: 700; color: var(--primary); font-size: 0.9rem; }
+    .product-cat { font-size: 0.65rem; background: #E8F5E9; color: #1B998B; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 2px; }
     
     .cart-item {
       display: flex; align-items: center; gap: 6px;
-      padding: 8px 0; border-bottom: 1px solid var(--border);
-      font-size: 0.76rem;
+      padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.76rem;
     }
-    .cart-item:last-child { border-bottom: none; }
     .cart-info { flex: 1; min-width: 0; }
     .cart-id { font-size: 0.8rem; font-weight: 600; }
     .cart-name { font-size: 0.73rem; color: var(--text-secondary); }
@@ -141,17 +122,20 @@
     .cart-controls { display: flex; align-items: center; gap: 3px; }
     .cart-qty {
       width: 36px; text-align: center; font-weight: 600; font-size: 0.78rem;
-      border: 1px solid var(--border); border-radius: 6px; padding: 4px;
-      background: var(--bg);
+      border: 1px solid var(--border); border-radius: 6px; padding: 4px; background: var(--bg);
     }
     .cart-subtotal { font-weight: 600; color: var(--primary); min-width: 48px; text-align: right; font-size: 0.8rem; }
-    
     .btn-delete {
       background: none; border: none; color: #ccc; font-size: 0.85rem;
-      cursor: pointer; padding: 4px 6px; border-radius: 50%;
-      transition: all 0.2s; flex-shrink: 0; line-height: 1;
+      cursor: pointer; padding: 4px 6px; border-radius: 50%; flex-shrink: 0;
     }
     .btn-delete:active { color: var(--danger); background: #FFF0F0; }
+    
+    .cart-category-header {
+      font-size: 0.75rem; font-weight: 600; padding: 6px 0; margin-top: 4px;
+      color: var(--primary); border-bottom: 2px solid var(--accent);
+    }
+    .cart-category-subtotal { font-size: 0.75rem; color: var(--text-secondary); text-align: right; padding: 4px 0; }
     
     .totals-bar {
       background: var(--surface); border-radius: var(--radius);
@@ -212,7 +196,6 @@
     .stock-value { font-size: 1.05rem; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
     .price-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
     .price-row input { flex: 1; }
-    .price-row button { flex-shrink: 0; }
     
     .modal-overlay {
       display: none; position: fixed; top: 0; left: 0;
@@ -221,90 +204,159 @@
     }
     .modal-box {
       background: var(--surface); border-radius: 20px;
-      padding: 24px; width: 85%; max-width: 320px;
+      padding: 20px; width: 90%; max-width: 340px;
       text-align: center; box-shadow: 0 12px 40px rgba(0,0,0,0.25);
       animation: modalIn 0.25s ease;
     }
     @keyframes modalIn { from{opacity:0;transform:scale(0.9);} to{opacity:1;transform:scale(1);} }
-    .modal-icon { font-size: 3rem; margin-bottom: 10px; }
-    .modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; color: var(--text); }
-    .modal-subtitle { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 18px; }
-    .modal-buttons { display: flex; gap: 8px; }
+    .modal-icon { font-size: 2.5rem; margin-bottom: 8px; }
+    .modal-title { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .modal-subtitle { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px; }
+    .modal-buttons { display: flex; gap: 6px; margin-top: 8px; }
     .modal-buttons button { flex: 1; }
+    .payment-options { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+    .payment-btn {
+      flex: 1; min-width: 45%; padding: 10px; border: 2px solid var(--border);
+      border-radius: 10px; background: var(--surface); font-weight: 500;
+      font-size: 0.78rem; cursor: pointer; text-align: center;
+    }
+    .payment-btn.selected { border-color: var(--accent); background: #E8F8F5; color: var(--accent); font-weight: 600; }
+    
+    .welcome-box { text-align: center; padding: 40px 20px; }
+    .welcome-box h2 { font-size: 1.3rem; margin-bottom: 6px; color: var(--primary); }
+    .welcome-box p { color: var(--text-secondary); margin-bottom: 20px; font-size: 0.85rem; }
   </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-logo-box">
-    <img src="icon.svg" alt="Store" class="header-logo">
+<!-- BIENVENIDA -->
+<div id="vista-bienvenida" class="view active">
+  <div class="welcome-box">
+    <div style="font-size:3rem;margin-bottom:10px;">👋</div>
+    <h2>Bienvenido a Store</h2>
+    <p>¿Cómo te llamas?</p>
+    <input type="text" id="input-nombre-usuario" placeholder="Escribe tu nombre" style="width:100%;max-width:280px;">
+    <button class="btn btn-primary" style="width:100%;max-width:280px;margin-top:8px;" onclick="guardarUsuario()">Entrar</button>
   </div>
-  <span class="header-title">Store</span>
 </div>
 
-<div class="main-content">
-  
-  <div id="vista-productos" class="view active">
-    <div class="card">
-      <div class="input-row">
-        <input type="text" id="busqueda-producto" placeholder="Código o nombre...">
-        <button class="btn btn-primary btn-icon" onclick="abrirEscaner('productos')">📷</button>
+<!-- APP -->
+<div id="vista-app" class="view">
+  <div class="header">
+    <div class="header-left">
+      <div class="header-logo-box"><img src="icon.svg" alt="Store" class="header-logo"></div>
+      <span class="header-title">Store</span>
+    </div>
+    <div class="header-user" id="header-usuario">
+      <span>👤</span>
+      <span id="nombre-usuario-header"></span>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div id="vista-productos" class="view active">
+      <div class="card">
+        <div class="input-row">
+          <input type="text" id="busqueda-producto" placeholder="Código o nombre...">
+          <button class="btn btn-primary btn-icon" onclick="abrirEscaner('productos')">📷</button>
+        </div>
       </div>
+      <div class="card" id="card-edicion" style="display:none;">
+        <div class="card-header" id="titulo-edicion">Producto</div>
+        <div style="margin-bottom:6px;"><label style="font-size:0.75rem;color:var(--text-secondary);">ID / Descripción</label><input type="text" id="edit-id-desc" disabled style="width:100%;"></div>
+        <div class="price-row"><label style="font-size:0.75rem;color:var(--text-secondary);">Precio:</label><input type="number" id="edit-precio" disabled><button class="btn btn-sm btn-outline" onclick="habilitarPrecio()">✏️</button></div>
+        <div style="margin-bottom:6px;"><label style="font-size:0.75rem;color:var(--text-secondary);">Categoría:</label><select id="edit-categoria" style="width:100%;padding:8px;border-radius:10px;border:1px solid var(--border);"><option value="TEC">🏛️ TEC</option><option value="MILENIO">🎓 MILENIO</option></select></div>
+        <div class="stock-label">📦 Inventario actual: <span id="stock-actual" class="stock-value">0 pzas</span></div>
+        <input type="number" id="edit-stock" placeholder="Cantidad a agregar" style="margin-bottom:6px;width:100%;">
+        <div style="display:flex;gap:6px;"><button class="btn btn-accent" style="flex:1;" onclick="guardarProducto()">Guardar</button><button class="btn btn-outline" style="flex:1;" onclick="cancelarEdicion()">Cancelar</button></div>
+      </div>
+      <div class="card"><div class="card-header">📦 Catálogo</div><div id="lista-productos">Cargando...</div></div>
     </div>
-    <div class="card" id="card-edicion" style="display:none;">
-      <div class="card-header" id="titulo-edicion">Producto</div>
-      <div style="margin-bottom:6px;"><label style="font-size:0.75rem;color:var(--text-secondary);">ID / Descripción</label><input type="text" id="edit-id-desc" disabled style="width:100%;"></div>
-      <div class="price-row"><label style="font-size:0.75rem;color:var(--text-secondary);">Precio:</label><input type="number" id="edit-precio" disabled><button class="btn btn-sm btn-outline" onclick="habilitarPrecio()" id="btn-edit-precio">✏️</button></div>
-      <div class="stock-label">📦 Inventario actual: <span id="stock-actual" class="stock-value">0 pzas</span></div>
-      <input type="number" id="edit-stock" placeholder="Cantidad a agregar" style="margin-bottom:6px;width:100%;">
-      <div style="display:flex;gap:6px;"><button class="btn btn-accent" style="flex:1;" onclick="guardarProducto()">Guardar</button><button class="btn btn-outline" style="flex:1;" onclick="cancelarEdicion()">Cancelar</button></div>
+    
+    <div id="vista-cobrar" class="view">
+      <div class="card">
+        <div class="input-row"><input type="text" id="input-codigo-cobrar" placeholder="Escanea o código..."><button class="btn btn-primary btn-icon" onclick="abrirEscaner('cobrar')">📷</button></div>
+        <button class="btn btn-accent" style="width:100%;margin-top:5px;" onclick="agregarAlCarrito()">Agregar</button>
+      </div>
+      <div class="card"><div class="card-header">🧾 Ticket</div><div id="lista-carrito"><div class="empty-state"><div class="empty-state-icon">🛒</div>Vacío</div></div></div>
+      <div class="totals-bar"><div class="totals-items" id="total-articulos">📦 0 artículos</div><div class="totals-amount" id="total-monto">$0</div><button class="btn btn-primary" style="width:100%;margin-top:8px;font-size:1rem;" onclick="cobrar()">💳 Cobrar</button></div>
     </div>
-    <div class="card"><div class="card-header">📦 Catálogo</div><div id="lista-productos">Cargando...</div></div>
-  </div>
-  
-  <div id="vista-cobrar" class="view">
-    <div class="card">
-      <div class="input-row"><input type="text" id="input-codigo-cobrar" placeholder="Escanea o código..."><button class="btn btn-primary btn-icon" onclick="abrirEscaner('cobrar')">📷</button></div>
-      <button class="btn btn-accent" style="width:100%;margin-top:5px;" onclick="agregarAlCarrito()">Agregar</button>
+    
+    <div id="vista-registros" class="view">
+      <div class="card" style="text-align:center;"><div style="font-size:2rem;">📋</div><div class="card-header">Registros</div>
+        <button class="btn btn-primary" style="width:100%;" onclick="verVentas('TEC')">🏛️ Ventas TEC</button>
+        <button class="btn btn-outline" style="width:100%;margin-top:5px;" onclick="verVentas('MILENIO')">🎓 Ventas MILENIO</button>
+        <button class="btn btn-outline" style="width:100%;margin-top:5px;" onclick="descargarActual()">📥 Descargar Excel</button>
+      </div>
+      <div class="card" id="card-ventas" style="display:none;"><div class="card-header" id="titulo-ventas">📊 Transacciones</div><div id="tabla-ventas" style="font-size:0.75rem;"></div></div>
+      <div class="card"><div class="card-header">📁 Archivos anteriores</div><div id="lista-archivos">...</div></div>
     </div>
-    <div class="card"><div class="card-header">🧾 Ticket</div><div id="lista-carrito"><div class="empty-state"><div class="empty-state-icon">🛒</div>Vacío</div></div></div>
-    <div class="totals-bar"><div class="totals-items" id="total-articulos">📦 0 artículos</div><div class="totals-amount" id="total-monto">$0</div><button class="btn btn-primary" style="width:100%;margin-top:8px;font-size:1rem;" onclick="cobrar()">💳 Cobrar</button></div>
   </div>
-  
-  <div id="vista-registros" class="view">
-    <div class="card" style="text-align:center;"><div style="font-size:2rem;">📋</div><div class="card-header">Registros del mes</div><button class="btn btn-primary" style="width:100%;" onclick="verVentasActuales()">Ver ventas</button><button class="btn btn-outline" style="width:100%;margin-top:5px;" onclick="descargarActual()">📥 Descargar Excel</button></div>
-    <div class="card" id="card-ventas" style="display:none;"><div class="card-header">📊 Transacciones</div><div id="tabla-ventas" style="font-size:0.75rem;"></div></div>
-    <div class="card"><div class="card-header">📁 Archivos anteriores</div><div id="lista-archivos">...</div></div>
-  </div>
-  
+
+  <nav class="bottom-nav">
+    <div class="nav-item active" id="nav-productos" onclick="cambiarVista('productos')"><span class="badge" id="badge-criticos">0</span><span class="nav-icon">📦</span>Productos</div>
+    <div class="nav-item" id="nav-cobrar" onclick="cambiarVista('cobrar')"><span class="nav-icon">💳</span>Cobrar</div>
+    <div class="nav-item" id="nav-registros" onclick="cambiarVista('registros')"><span class="nav-icon">📋</span>Registros</div>
+  </nav>
 </div>
 
 <div id="scanner-modal"><div id="scanner-viewport"><div class="laser-line"></div></div><button id="close-scanner" onclick="cerrarEscaner()">✕</button></div>
 <div class="toast" id="toast"></div>
 
+<!-- MODAL DE COBRO -->
 <div class="modal-overlay" id="modal-confirm">
   <div class="modal-box">
     <div class="modal-icon">💳</div>
     <div class="modal-title">Confirmar cobro</div>
     <div class="modal-subtitle" id="modal-monto">Total: $0</div>
+    <div style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:4px;">Tipo de pago:</div>
+    <div class="payment-options" id="payment-options">
+      <div class="payment-btn selected" onclick="seleccionarPago(this,'Efectivo')">💵 Efectivo</div>
+      <div class="payment-btn" onclick="seleccionarPago(this,'Tarjeta')">💳 Tarjeta</div>
+      <div class="payment-btn" onclick="seleccionarPago(this,'CECO')">🏷️ CECO</div>
+      <div class="payment-btn" onclick="seleccionarPago(this,'Empleado')">🎂 Emp. (-20%)</div>
+    </div>
     <div class="modal-buttons"><button class="btn btn-outline" onclick="cerrarModal()">Cancelar</button><button class="btn btn-primary" onclick="ejecutarCobro()">Cobrar</button></div>
   </div>
 </div>
 
-<nav class="bottom-nav">
-  <div class="nav-item active" id="nav-productos" onclick="cambiarVista('productos')"><span class="badge" id="badge-criticos">0</span><span class="nav-icon">📦</span>Productos</div>
-  <div class="nav-item" id="nav-cobrar" onclick="cambiarVista('cobrar')"><span class="nav-icon">💳</span>Cobrar</div>
-  <div class="nav-item" id="nav-registros" onclick="cambiarVista('registros')"><span class="nav-icon">📋</span>Registros</div>
-</nav>
-
 <script>
-const URL_API = "https://script.google.com/macros/s/AKfycbwZoVS5pmfj869sCm8LftL33zwJNsxt11iVYQ5Qcfux0CAZ0ygjNg7XpfohUo8_GQxe/exec";
+const URL_API = "https://script.google.com/macros/s/AKfycbxwPOGuzaFYGo8hno8LotGyjvDW9MhLzLhLk7CX89LQJGtIwHV4xuUKe4JHu4ofeD6K/exec";
 let productos = [];
 let carrito = [];
 let scanner = null;
 let codigoEdicion = '';
+let usuarioActual = '';
+let tipoPagoSeleccionado = 'Efectivo';
 
-window.onload = cargarProductos;
+// ─── INICIO ───
+window.onload = function() {
+  usuarioActual = localStorage.getItem('store_usuario') || '';
+  if (usuarioActual) {
+    mostrarApp();
+    cargarProductos();
+  }
+};
+
+function guardarUsuario() {
+  let nombre = document.getElementById('input-nombre-usuario').value.trim();
+  if (!nombre) return mostrarToast('Escribe tu nombre');
+  localStorage.setItem('store_usuario', nombre);
+  usuarioActual = nombre;
+  mostrarApp();
+  cargarProductos();
+}
+
+function mostrarApp() {
+  document.getElementById('vista-bienvenida').classList.remove('active');
+  document.getElementById('vista-app').classList.add('active');
+  document.getElementById('nombre-usuario-header').textContent = usuarioActual;
+}
+
+function requiereUsuario() {
+  if (!usuarioActual) { mostrarToast('⚠️ Selecciona un usuario primero'); return false; }
+  return true;
+}
 
 function mostrarToast(m) {
   let t = document.getElementById('toast');
@@ -313,7 +365,7 @@ function mostrarToast(m) {
 }
 
 function cambiarVista(v) {
-  document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('#vista-app .view').forEach(x => x.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
   document.getElementById('vista-' + v).classList.add('active');
   document.getElementById('nav-' + v).classList.add('active');
@@ -322,6 +374,7 @@ function cambiarVista(v) {
   if (v === 'registros') cargarArchivos();
 }
 
+// ─── PRODUCTOS ───
 function cargarProductos() {
   fetch(URL_API).then(r => r.json()).then(d => {
     productos = d;
@@ -339,18 +392,19 @@ function actualizarBadge(arr) {
 
 function renderizarProductos(arr) {
   let c = document.getElementById('lista-productos');
-  if (!arr.length) { c.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div>Sin productos</div>'; return; }
-  let ordenados = [...arr].sort((a, b) => {
-    if (Number(a.stock) <= 1 && Number(b.stock) > 1) return -1;
-    if (Number(a.stock) > 1 && Number(b.stock) <= 1) return 1;
-    return 0;
-  });
+  if (!arr.length) { c.innerHTML = '<div class="empty-state">📭 Sin productos</div>'; return; }
+  let ordenados = [...arr].sort((a, b) => Number(a.stock) <= 1 ? -1 : 1);
   c.innerHTML = ordenados.map(p => {
     let stock = Number(p.stock), precio = Number(p.precio);
     let sc = stock <= 1 ? 'stock-critical' : (stock <= 5 ? 'stock-low' : 'stock-normal');
-    let sm = stock <= 1 ? '⚠️ Últimas piezas' : (stock <= 5 ? 'Stock bajo' : 'En existencia');
+    let sm = stock <= 1 ? '⚠️ Últimas' : (stock <= 5 ? 'Stock bajo' : 'En existencia');
     return `<div class="product-item${stock <= 1 ? ' critical' : ''}">
-      <div class="product-info"><div class="product-id">${p.id}</div><div class="product-name">${p.descripcion}</div><div class="product-stock ${sc}">${sm}: ${stock} pzas</div></div>
+      <div class="product-info">
+        <div class="product-id">${p.id}</div>
+        <div class="product-name">${p.descripcion}</div>
+        <span class="product-cat">${p.categoria || 'TEC'}</span>
+        <div class="product-stock ${sc}">${sm}: ${stock} pzas</div>
+      </div>
       <div class="product-price">$${precio.toFixed(2)}</div></div>`;
   }).join('');
 }
@@ -362,6 +416,7 @@ document.getElementById('busqueda-producto').addEventListener('input', function(
   renderizarProductos(filtrados);
   let exacto = productos.find(p => p.id === txt);
   if (exacto) {
+    if (!requiereUsuario()) return;
     codigoEdicion = exacto.id;
     document.getElementById('card-edicion').style.display = 'block';
     document.getElementById('titulo-edicion').textContent = exacto.descripcion;
@@ -369,9 +424,10 @@ document.getElementById('busqueda-producto').addEventListener('input', function(
     document.getElementById('stock-actual').textContent = Number(exacto.stock) + ' pzas';
     document.getElementById('edit-precio').value = Number(exacto.precio);
     document.getElementById('edit-precio').disabled = true;
-    document.getElementById('btn-edit-precio').style.display = 'inline-flex';
+    document.getElementById('edit-categoria').value = exacto.categoria || 'TEC';
     document.getElementById('edit-stock').value = '';
   } else if (txt.length >= 8) {
+    if (!requiereUsuario()) return;
     codigoEdicion = txt;
     document.getElementById('card-edicion').style.display = 'block';
     document.getElementById('titulo-edicion').textContent = 'Nuevo producto';
@@ -379,7 +435,7 @@ document.getElementById('busqueda-producto').addEventListener('input', function(
     document.getElementById('stock-actual').textContent = '0 pzas';
     document.getElementById('edit-precio').value = '';
     document.getElementById('edit-precio').disabled = false;
-    document.getElementById('btn-edit-precio').style.display = 'none';
+    document.getElementById('edit-categoria').value = 'TEC';
     document.getElementById('edit-stock').value = '';
   }
 });
@@ -390,15 +446,17 @@ function guardarProducto() {
   let desc = document.getElementById('titulo-edicion').textContent;
   let stock = parseInt(document.getElementById('edit-stock').value) || 0;
   let precio = parseFloat(document.getElementById('edit-precio').value) || 0;
+  let cat = document.getElementById('edit-categoria').value;
   if (!desc || stock <= 0 || precio <= 0) return mostrarToast('Completa campos');
   let existente = productos.find(p => p.id === codigoEdicion);
   let stockFinal = existente ? Number(existente.stock) + stock : stock;
-  fetch(URL_API, { method: 'POST', body: JSON.stringify({ accion: 'guardar_producto', datos: { id: codigoEdicion, descripcion: desc, precio, stock: stockFinal, stockMinimo: 5 } }) })
+  fetch(URL_API, { method: 'POST', body: JSON.stringify({ accion: 'guardar_producto', registradoPor: usuarioActual, datos: { id: codigoEdicion, descripcion: desc, precio, stock: stockFinal, categoria: cat, stockMinimo: 5 } }) })
     .then(() => { mostrarToast('✅ Guardado'); cancelarEdicion(); cargarProductos(); });
 }
 
 function cancelarEdicion() { document.getElementById('card-edicion').style.display = 'none'; document.getElementById('busqueda-producto').value = ''; renderizarProductos(productos); }
 
+// ─── ESCÁNER ───
 function abrirEscaner(ctx) {
   document.getElementById('scanner-modal').style.display = 'flex';
   scanner = new Html5Qrcode("scanner-viewport");
@@ -410,17 +468,18 @@ function abrirEscaner(ctx) {
 }
 function cerrarEscaner() { scanner&&scanner.stop().then(()=>document.getElementById('scanner-modal').style.display='none'); }
 
+// ─── CARRITO ───
 function agregarAlCarrito() {
   let cod = document.getElementById('input-codigo-cobrar').value.trim();
   if(!cod) return mostrarToast('Código requerido');
   let p = productos.find(x=>x.id===cod);
-  let nombre = p?p.descripcion:'?', precio = p?Number(p.precio):0;
+  let nombre = p?p.descripcion:'?', precio = p?Number(p.precio):0, cat = p?p.categoria:'TEC';
   let existe = carrito.find(x=>x.id===cod);
   if(existe) {
     let stockDisp = p?Number(p.stock):0;
     if(existe.cantidad >= stockDisp) return mostrarToast(stockDisp<=1?'⚠️ ¡Última pieza!':'⚠️ Stock máximo: '+stockDisp);
     existe.cantidad++;
-  } else carrito.push({id:cod,descripcion:nombre,cantidad:1,precio});
+  } else carrito.push({id:cod,descripcion:nombre,cantidad:1,precio,categoria:cat});
   document.getElementById('input-codigo-cobrar').value='';
   renderizarCarrito();
 }
@@ -429,8 +488,8 @@ function cambiarCantidad(id, d) {
   let item = carrito.find(x=>x.id===id);
   if(!item) return;
   let producto = productos.find(p=>p.id===id);
-  let stockDisponible = producto?Number(producto.stock):0;
-  if(d>0 && item.cantidad>=stockDisponible) return mostrarToast(stockDisponible<=1?'⚠️ ¡Es la última pieza!':'⚠️ Stock máximo: '+stockDisponible);
+  let stockDisp = producto?Number(producto.stock):0;
+  if(d>0 && item.cantidad>=stockDisp) return mostrarToast(stockDisp<=1?'⚠️ ¡Última pieza!':'⚠️ Stock máximo: '+stockDisp);
   item.cantidad+=d;
   if(item.cantidad<=0) carrito=carrito.filter(x=>x.id!==id);
   renderizarCarrito();
@@ -440,40 +499,26 @@ function editarCantidad(id, el) {
   let item = carrito.find(x=>x.id===id);
   let v = parseInt(el.value);
   let producto = productos.find(p=>p.id===id);
-  let stockDisponible = producto?Number(producto.stock):0;
+  let stockDisp = producto?Number(producto.stock):0;
   if(isNaN(v)||v<=0){el.value=item.cantidad;return;}
-  if(v>stockDisponible){ mostrarToast(stockDisponible<=1?'⚠️ ¡Última pieza!':'⚠️ Solo hay '+stockDisponible+' en stock'); el.value=stockDisponible; v=stockDisponible; }
+  if(v>stockDisp){ mostrarToast(stockDisp<=1?'⚠️ ¡Última pieza!':'⚠️ Solo hay '+stockDisp); el.value=stockDisp; v=stockDisp; }
   item.cantidad=v;
   renderizarCarrito();
 }
 
-function eliminarItem(id) { carrito = carrito.filter(x=>x.id!==id); renderizarCarrito(); mostrarToast('🗑️ Eliminado'); }
+function eliminarItem(id) { carrito = carrito.filter(x=>x.id!==id); renderizarCarrito(); }
 
 function renderizarCarrito() {
   let c=document.getElementById('lista-carrito'), ta=0, tm=0;
-  if(!carrito.length){ c.innerHTML='<div class="empty-state"><div class="empty-state-icon">🛒</div>Vacío</div>'; document.getElementById('total-articulos').textContent='📦 0 artículos'; document.getElementById('total-monto').textContent='$0'; return; }
-  c.innerHTML=carrito.map(item=>{
-    let sub=item.cantidad*Number(item.precio); ta+=item.cantidad; tm+=sub;
-    return `<div class="cart-item"><div class="cart-info"><div class="cart-id">${item.id}</div><div class="cart-name">${item.descripcion}</div><div class="cart-unit">$${Number(item.precio).toFixed(2)} c/u</div></div><div class="cart-controls"><button class="btn btn-outline btn-sm" onclick="cambiarCantidad('${item.id}',-1)">−</button><input class="cart-qty" value="${item.cantidad}" onchange="editarCantidad('${item.id}',this)"><button class="btn btn-outline btn-sm" onclick="cambiarCantidad('${item.id}',1)">+</button></div><div class="cart-subtotal">$${sub.toFixed(2)}</div><button class="btn-delete" onclick="eliminarItem('${item.id}')" title="Quitar">✕</button></div>`;
-  }).join('');
-  document.getElementById('total-articulos').textContent=`📦 ${ta} artículos`; document.getElementById('total-monto').textContent=`$${tm.toFixed(2)}`;
-}
-
-function cobrar() {
-  if(!carrito.length) return mostrarToast('Vacío');
-  document.getElementById('modal-monto').textContent='Total: $'+document.getElementById('total-monto').textContent.replace('$','');
-  document.getElementById('modal-confirm').style.display='flex';
-}
-function cerrarModal() { document.getElementById('modal-confirm').style.display='none'; }
-function ejecutarCobro() {
-  cerrarModal();
-  fetch(URL_API,{method:'POST',body:JSON.stringify({accion:'cobrar',datos:carrito})})
-    .then(()=>{ mostrarToast('✅ Venta registrada'); carrito=[]; renderizarCarrito(); cargarProductos(); });
-}
-
-function cargarArchivos(){ fetch(URL_API+'?obtener=archivos').then(r=>r.json()).then(d=>{ document.getElementById('lista-archivos').innerHTML=d.length?d.map(a=>`<div>📁 ${a}</div>`).join(''):'<p>Sin archivos</p>'; }); }
-function verVentasActuales(){ fetch(URL_API+'?obtener=ventas_actuales').then(r=>r.json()).then(d=>{ document.getElementById('card-ventas').style.display='block'; document.getElementById('tabla-ventas').innerHTML=d.length?`<table>${d.map(t=>`<tr><td>${t.fecha}</td><td>${t.producto}</td><td>${t.cantidad}</td><td>$${t.total}</td></tr>`).join('')}</table>`:'<p>Sin ventas</p>'; }); }
-function descargarActual(){ fetch(URL_API,{method:'POST',body:JSON.stringify({accion:'descargar_actual'})}).then(r=>r.json()).then(d=>window.open(d.url,'_blank')); }
-</script>
-</body>
-</html>
+  if(!carrito.length){ c.innerHTML='<div class="empty-state">🛒 Vacío</div>'; document.getElementById('total-articulos').textContent='📦 0 artículos'; document.getElementById('total-monto').textContent='$0'; return; }
+  
+  // Agrupar por categoría
+  let tec = carrito.filter(x=>x.categoria==='TEC');
+  let mil = carrito.filter(x=>x.categoria==='MILENIO');
+  let html = '';
+  let mostrarCategorias = tec.length > 0 && mil.length > 0;
+  
+  function renderGrupo(items, titulo, emoji) {
+    let h = '';
+    let subt = 0;
+    if (mostrarCategor
