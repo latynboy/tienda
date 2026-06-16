@@ -34,34 +34,22 @@
       overflow: hidden;
       user-select: none;
       -webkit-user-select: none;
+      font-size: 0.85rem;
     }
     
     .header {
       background: var(--surface);
-      padding: 12px 20px;
+      padding: 10px 16px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       box-shadow: var(--shadow);
       z-index: 100;
     }
-    .header-icon {
-      font-size: 1.8rem;
-      color: var(--accent);
-    }
-    .header-title {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: var(--primary);
-      letter-spacing: -0.3px;
-    }
+    .header-icon { font-size: 1.5rem; color: var(--accent); }
+    .header-title { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
     
-    .main-content {
-      flex: 1;
-      overflow-y: auto;
-      padding: 12px;
-      padding-bottom: 80px;
-    }
+    .main-content { flex: 1; overflow-y: auto; padding: 10px; padding-bottom: 75px; }
     .view { display: none; animation: fadeIn 0.2s ease; }
     .view.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
@@ -69,193 +57,114 @@
     .card {
       background: var(--surface);
       border-radius: var(--radius);
-      padding: 14px;
-      margin-bottom: 10px;
+      padding: 12px;
+      margin-bottom: 8px;
       box-shadow: var(--shadow);
     }
-    .card-header {
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin-bottom: 10px;
-      color: var(--text);
-    }
+    .card-header { font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; }
     
-    .input-row {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    input[type="text"],
-    input[type="number"] {
-      flex: 1;
-      min-width: 0;
-      padding: 10px 12px;
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      font-size: 0.9rem;
-      font-family: 'Inter', sans-serif;
-      outline: none;
-      background: var(--bg);
-      transition: border 0.2s;
+    .input-row { display: flex; gap: 5px; align-items: center; margin-bottom: 8px; }
+    input[type="text"], input[type="number"] {
+      flex: 1; min-width: 0; padding: 8px 10px;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 0.85rem; font-family: 'Inter', sans-serif;
+      outline: none; background: var(--bg);
     }
     input:focus { border-color: var(--primary); background: var(--surface); }
     
     .btn {
-      padding: 10px 16px;
-      border: none;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      transition: all 0.2s;
-      font-family: 'Inter', sans-serif;
-      white-space: nowrap;
+      padding: 8px 14px; border: none; border-radius: 8px;
+      font-weight: 600; font-size: 0.8rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 3px;
+      font-family: 'Inter', sans-serif; white-space: nowrap;
     }
     .btn:active { transform: scale(0.97); opacity: 0.9; }
     .btn-primary { background: var(--primary); color: white; }
     .btn-accent { background: var(--accent); color: white; }
-    .btn-danger { background: var(--danger); color: white; }
     .btn-outline { background: transparent; border: 1.5px solid var(--primary); color: var(--primary); }
-    .btn-icon { width: 38px; height: 38px; padding: 0; border-radius: 10px; font-size: 1.1rem; flex-shrink: 0; }
-    .btn-sm { padding: 5px 10px; font-size: 0.8rem; border-radius: 8px; }
+    .btn-icon { width: 34px; height: 34px; padding: 0; border-radius: 8px; font-size: 1rem; flex-shrink: 0; }
+    .btn-sm { padding: 3px 7px; font-size: 0.75rem; border-radius: 6px; min-width: 26px; }
     
     .product-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
     }
     .product-item:last-child { border-bottom: none; }
     .product-info { flex: 1; }
-    .product-id { font-size: 0.95rem; font-weight: 600; color: var(--text); }
-    .product-name { font-size: 0.85rem; color: var(--text-secondary); }
-    .product-stock { font-size: 0.8rem; font-weight: 500; margin-top: 2px; }
+    .product-id { font-size: 0.85rem; font-weight: 600; }
+    .product-name { font-size: 0.78rem; color: var(--text-secondary); }
+    .product-stock { font-size: 0.75rem; font-weight: 500; margin-top: 2px; }
     .stock-normal { color: #1B998B; }
     .stock-low { color: #E6A817; }
     .stock-critical { color: #D64545; }
-    .product-price { font-weight: 700; color: var(--primary); font-size: 1rem; }
+    .product-price { font-weight: 700; color: var(--primary); font-size: 0.9rem; }
     
     .cart-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 0; border-bottom: 1px solid var(--border);
+      font-size: 0.78rem;
     }
     .cart-item:last-child { border-bottom: none; }
-    .cart-info { flex: 1; }
-    .cart-name { font-weight: 500; font-size: 0.85rem; }
-    .cart-unit-price { font-size: 0.72rem; color: var(--text-secondary); }
-    .cart-controls { display: flex; align-items: center; gap: 4px; }
-    .cart-qty { width: 30px; text-align: center; font-weight: 600; font-size: 0.9rem; }
-    .cart-subtotal { font-weight: 600; color: var(--primary); min-width: 50px; text-align: right; font-size: 0.85rem; }
+    .cart-info { flex: 1; min-width: 0; }
+    .cart-name { font-weight: 500; font-size: 0.8rem; }
+    .cart-id { font-size: 0.7rem; color: var(--text-secondary); }
+    .cart-controls { display: flex; align-items: center; gap: 3px; }
+    .cart-qty {
+      width: 40px; text-align: center; font-weight: 600; font-size: 0.8rem;
+      border: 1px solid var(--border); border-radius: 6px; padding: 4px;
+      background: var(--bg);
+    }
+    .cart-subtotal { font-weight: 600; color: var(--primary); min-width: 48px; text-align: right; font-size: 0.8rem; }
     
     .totals-bar {
-      background: var(--surface);
-      border-radius: var(--radius);
-      padding: 16px;
-      margin-top: 10px;
-      box-shadow: var(--shadow-lg);
-      text-align: center;
+      background: var(--surface); border-radius: var(--radius);
+      padding: 14px; margin-top: 8px; box-shadow: var(--shadow-lg); text-align: center;
     }
-    .totals-items { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 4px; }
-    .totals-amount { font-size: 2rem; font-weight: 700; color: var(--primary); }
+    .totals-items { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 3px; }
+    .totals-amount { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
     
     .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: var(--surface);
-      display: flex;
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-      z-index: 1000;
-      padding: 5px 0;
-      padding-bottom: env(safe-area-inset-bottom, 5px);
+      position: fixed; bottom: 0; left: 0; width: 100%;
+      background: var(--surface); display: flex;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 1000;
+      padding: 4px 0; padding-bottom: env(safe-area-inset-bottom, 4px);
     }
     .nav-item {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 2px;
-      padding: 5px;
-      color: var(--text-secondary);
-      font-size: 0.68rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: color 0.2s;
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      gap: 1px; padding: 4px; color: var(--text-secondary);
+      font-size: 0.65rem; font-weight: 500; cursor: pointer;
     }
     .nav-item.active { color: var(--primary); font-weight: 600; }
-    .nav-icon { font-size: 1.4rem; }
+    .nav-icon { font-size: 1.2rem; }
     
     #scanner-modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.95);
-      z-index: 9999;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      display: none; position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh; background: rgba(0,0,0,0.95);
+      z-index: 9999; flex-direction: column; justify-content: center; align-items: center;
     }
     #scanner-viewport {
-      width: 90%;
-      max-width: 320px;
-      aspect-ratio: 1;
-      border-radius: 20px;
-      overflow: hidden;
-      border: 3px solid var(--accent);
-      position: relative;
+      width: 90%; max-width: 300px; aspect-ratio: 1;
+      border-radius: 20px; overflow: hidden; border: 3px solid var(--accent); position: relative;
     }
     .laser-line {
-      position: absolute;
-      top: 50%; left: 5%;
-      width: 90%; height: 3px;
-      background: #FF3B30;
-      box-shadow: 0 0 8px #FF3B30;
-      animation: laser 2s ease-in-out infinite;
-      z-index: 10;
+      position: absolute; top: 50%; left: 5%; width: 90%; height: 3px;
+      background: #FF3B30; box-shadow: 0 0 8px #FF3B30;
+      animation: laser 2s ease-in-out infinite; z-index: 10;
     }
     @keyframes laser { 0%,100% { top: 20%; } 50% { top: 80%; } }
-    #close-scanner {
-      margin-top: 20px;
-      background: none;
-      border: none;
-      color: white;
-      font-size: 2rem;
-      cursor: pointer;
-    }
+    #close-scanner { margin-top: 20px; background: none; border: none; color: white; font-size: 2rem; cursor: pointer; }
     
-    .empty-state {
-      text-align: center;
-      padding: 30px 20px;
-      color: var(--text-secondary);
-    }
-    .empty-state-icon { font-size: 2.5rem; margin-bottom: 8px; }
+    .empty-state { text-align: center; padding: 25px 20px; color: var(--text-secondary); font-size: 0.85rem; }
+    .empty-state-icon { font-size: 2rem; margin-bottom: 6px; }
     
     .toast {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #333;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-weight: 500;
-      z-index: 10000;
-      display: none;
-      font-size: 0.85rem;
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      background: #333; color: white; padding: 8px 18px; border-radius: 8px;
+      font-weight: 500; z-index: 10000; display: none; font-size: 0.8rem;
     }
+    
+    .stock-label { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px; }
+    .stock-value { font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
   </style>
 </head>
 <body>
@@ -277,11 +186,10 @@
     </div>
     <div class="card" id="card-edicion" style="display:none;">
       <div class="card-header" id="titulo-edicion">Editar producto</div>
+      <div class="stock-label">Inventario actual: <span id="stock-actual" class="stock-value">0 pzas</span></div>
+      <input type="number" id="edit-stock" placeholder="Cantidad a agregar" style="margin-bottom:8px;width:100%;">
       <input type="text" id="edit-descripcion" placeholder="Descripción" style="margin-bottom:8px;width:100%;">
-      <div style="display:flex;gap:8px;margin-bottom:8px;">
-        <input type="number" id="edit-stock" placeholder="Stock a agregar" style="flex:1;">
-        <input type="number" id="edit-precio" placeholder="Precio $" style="flex:1;">
-      </div>
+      <input type="number" id="edit-precio" placeholder="Precio $" style="margin-bottom:8px;width:100%;">
       <div style="display:flex;gap:8px;">
         <button class="btn btn-accent" style="flex:1;" onclick="guardarProducto()">Guardar</button>
         <button class="btn btn-outline" style="flex:1;" onclick="cancelarEdicion()">Cancelar</button>
@@ -300,30 +208,30 @@
         <input type="text" id="input-codigo-cobrar" placeholder="Escanear o escribir código...">
         <button class="btn btn-primary btn-icon" onclick="abrirEscaner('cobrar')">📷</button>
       </div>
-      <button class="btn btn-accent" style="width:100%;margin-top:8px;" onclick="agregarAlCarrito()">Agregar al ticket</button>
+      <button class="btn btn-accent" style="width:100%;margin-top:6px;" onclick="agregarAlCarrito()">Agregar al ticket</button>
     </div>
     <div class="card">
-      <div class="card-header">🧾 Ticket actual</div>
+      <div class="card-header">🧾 Ticket</div>
       <div id="lista-carrito"><div class="empty-state"><div class="empty-state-icon">🛒</div>Sin productos</div></div>
     </div>
-    <div class="totals-bar" id="totales-bar">
+    <div class="totals-bar">
       <div class="totals-items" id="total-articulos">📦 0 artículos</div>
       <div class="totals-amount" id="total-monto">$0</div>
-      <button class="btn btn-primary" style="width:100%;margin-top:10px;font-size:1.05rem;" onclick="cobrar()">💳 Cobrar</button>
+      <button class="btn btn-primary" style="width:100%;margin-top:8px;font-size:1rem;" onclick="cobrar()">💳 Cobrar</button>
     </div>
   </div>
   
   <!-- REGISTROS -->
   <div id="vista-registros" class="view">
     <div class="card" style="text-align:center;">
-      <div style="font-size:2.5rem;">📋</div>
+      <div style="font-size:2rem;">📋</div>
       <div class="card-header">Registros del mes</div>
       <button class="btn btn-primary" style="width:100%;" onclick="verVentasActuales()">Ver ventas</button>
-      <button class="btn btn-outline" style="width:100%;margin-top:6px;" onclick="descargarActual()">📥 Descargar Excel</button>
+      <button class="btn btn-outline" style="width:100%;margin-top:5px;" onclick="descargarActual()">📥 Descargar Excel</button>
     </div>
     <div class="card" id="card-ventas" style="display:none;">
       <div class="card-header">📊 Transacciones</div>
-      <div id="tabla-ventas" style="font-size:0.8rem;"></div>
+      <div id="tabla-ventas" style="font-size:0.75rem;"></div>
     </div>
     <div class="card">
       <div class="card-header">📁 Archivos anteriores</div>
@@ -341,15 +249,9 @@
 <div class="toast" id="toast"></div>
 
 <nav class="bottom-nav">
-  <div class="nav-item active" id="nav-productos" onclick="cambiarVista('productos')">
-    <span class="nav-icon">📦</span>Productos
-  </div>
-  <div class="nav-item" id="nav-cobrar" onclick="cambiarVista('cobrar')">
-    <span class="nav-icon">💳</span>Cobrar
-  </div>
-  <div class="nav-item" id="nav-registros" onclick="cambiarVista('registros')">
-    <span class="nav-icon">📋</span>Registros
-  </div>
+  <div class="nav-item active" id="nav-productos" onclick="cambiarVista('productos')"><span class="nav-icon">📦</span>Productos</div>
+  <div class="nav-item" id="nav-cobrar" onclick="cambiarVista('cobrar')"><span class="nav-icon">💳</span>Cobrar</div>
+  <div class="nav-item" id="nav-registros" onclick="cambiarVista('registros')"><span class="nav-icon">📋</span>Registros</div>
 </nav>
 
 <script>
@@ -363,8 +265,7 @@ window.onload = () => { cargarProductos(); };
 
 function mostrarToast(msg) {
   let t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.display = 'block';
+  t.textContent = msg; t.style.display = 'block';
   setTimeout(() => t.style.display = 'none', 2000);
 }
 
@@ -380,10 +281,8 @@ function cambiarVista(v) {
 
 // ─── PRODUCTOS ───
 function cargarProductos() {
-  fetch(URL_API)
-    .then(r => r.json())
-    .then(d => { productos = d; renderizarProductos(d); })
-    .catch(() => document.getElementById('lista-productos').innerHTML = '<p style="color:#D64545">Error al cargar</p>');
+  fetch(URL_API).then(r => r.json()).then(d => { productos = d; renderizarProductos(d); })
+    .catch(() => document.getElementById('lista-productos').innerHTML = '<p style="color:#D64545">Error</p>');
 }
 
 function renderizarProductos(arr) {
@@ -403,7 +302,6 @@ function renderizarProductos(arr) {
   }).join('');
 }
 
-// ─── BÚSQUEDA Y EDICIÓN ───
 document.getElementById('busqueda-producto').addEventListener('input', function() {
   let txt = this.value.toLowerCase().trim();
   if (!txt) { renderizarProductos(productos); document.getElementById('card-edicion').style.display = 'none'; return; }
@@ -413,18 +311,18 @@ document.getElementById('busqueda-producto').addEventListener('input', function(
   if (exacto) {
     codigoEdicion = exacto.id;
     document.getElementById('card-edicion').style.display = 'block';
-    document.getElementById('titulo-edicion').textContent = '📝 Sumar stock - ' + exacto.descripcion;
+    document.getElementById('titulo-edicion').textContent = '📝 ' + exacto.descripcion;
+    document.getElementById('stock-actual').textContent = exacto.stock + ' pzas';
     document.getElementById('edit-descripcion').value = exacto.descripcion;
     document.getElementById('edit-stock').value = '';
-    document.getElementById('edit-stock').placeholder = 'Cantidad a agregar';
     document.getElementById('edit-precio').value = exacto.precio;
   } else if (txt.length >= 8) {
     codigoEdicion = txt;
     document.getElementById('card-edicion').style.display = 'block';
     document.getElementById('titulo-edicion').textContent = '🆕 Nuevo producto';
+    document.getElementById('stock-actual').textContent = '0 pzas';
     document.getElementById('edit-descripcion').value = '';
     document.getElementById('edit-stock').value = '';
-    document.getElementById('edit-stock').placeholder = 'Stock inicial';
     document.getElementById('edit-precio').value = '';
   }
 });
@@ -436,8 +334,7 @@ function guardarProducto() {
   if (!desc || stock <= 0 || precio <= 0) return mostrarToast('Completa todos los campos');
   let existente = productos.find(p => p.id === codigoEdicion);
   let stockFinal = existente ? existente.stock + stock : stock;
-  fetch(URL_API, {
-    method: 'POST',
+  fetch(URL_API, { method: 'POST',
     body: JSON.stringify({ accion: 'guardar_producto', datos: { id: codigoEdicion, descripcion: desc, precio: precio, stock: stockFinal, stockMinimo: 5 } })
   }).then(() => {
     mostrarToast('✅ Producto guardado');
@@ -457,7 +354,7 @@ function cancelarEdicion() {
 function abrirEscaner(contexto) {
   document.getElementById('scanner-modal').style.display = 'flex';
   scanner = new Html5Qrcode("scanner-viewport");
-  scanner.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 260, height: 150 } },
+  scanner.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 250, height: 140 } },
     (texto) => {
       if (navigator.vibrate) navigator.vibrate(80);
       cerrarEscaner();
@@ -472,7 +369,7 @@ function abrirEscaner(contexto) {
 }
 
 function cerrarEscaner() {
-  if (scanner) { scanner.stop().then(() => document.getElementById('scanner-modal').style.display = 'none'); }
+  if (scanner) scanner.stop().then(() => document.getElementById('scanner-modal').style.display = 'none');
   else document.getElementById('scanner-modal').style.display = 'none';
 }
 
@@ -498,6 +395,15 @@ function cambiarCantidad(id, delta) {
   renderizarCarrito();
 }
 
+function editarCantidad(id, el) {
+  let item = carrito.find(x => x.id === id);
+  if (!item) return;
+  let val = parseInt(el.value);
+  if (isNaN(val) || val <= 0) { el.value = item.cantidad; return; }
+  item.cantidad = val;
+  renderizarCarrito();
+}
+
 function renderizarCarrito() {
   let c = document.getElementById('lista-carrito');
   let totalArt = 0, totalMon = 0;
@@ -512,10 +418,13 @@ function renderizarCarrito() {
     totalArt += item.cantidad;
     totalMon += subt;
     return `<div class="cart-item">
-      <div class="cart-info"><div class="cart-name">${item.descripcion}</div><div class="cart-unit-price">$${item.precio.toFixed(2)} c/u</div></div>
+      <div class="cart-info">
+        <div class="cart-name">${item.descripcion}</div>
+        <div class="cart-id">${item.id}</div>
+      </div>
       <div class="cart-controls">
         <button class="btn btn-outline btn-sm" onclick="cambiarCantidad('${item.id}', -1)">−</button>
-        <span class="cart-qty">${item.cantidad}</span>
+        <input class="cart-qty" type="number" value="${item.cantidad}" min="1" onchange="editarCantidad('${item.id}', this)">
         <button class="btn btn-outline btn-sm" onclick="cambiarCantidad('${item.id}', 1)">+</button>
       </div>
       <div class="cart-subtotal">$${subt.toFixed(2)}</div>
@@ -534,22 +443,16 @@ function cobrar() {
 
 // ─── REGISTROS ───
 function cargarArchivos() {
-  fetch(URL_API + '?obtener=archivos')
-    .then(r => r.json())
-    .then(d => {
-      let c = document.getElementById('lista-archivos');
-      c.innerHTML = d.length ? d.map(a => `<div style="padding:8px 0;">📁 ${a}</div>`).join('') : '<p style="color:#999">Sin archivos</p>';
-    });
+  fetch(URL_API + '?obtener=archivos').then(r => r.json()).then(d => {
+    document.getElementById('lista-archivos').innerHTML = d.length ? d.map(a => `<div>📁 ${a}</div>`).join('') : '<p style="color:#999">Sin archivos</p>';
+  });
 }
 
 function verVentasActuales() {
-  fetch(URL_API + '?obtener=ventas_actuales')
-    .then(r => r.json())
-    .then(d => {
-      document.getElementById('card-ventas').style.display = 'block';
-      let c = document.getElementById('tabla-ventas');
-      c.innerHTML = d.length ? `<table style="width:100%;">${d.map(t => `<tr style="border-bottom:1px solid #eee;"><td>${t.fecha}</td><td>${t.producto}</td><td>${t.cantidad}</td><td><strong>$${t.total}</strong></td></tr>`).join('')}</table>` : '<p style="color:#999">Sin ventas este mes</p>';
-    });
+  fetch(URL_API + '?obtener=ventas_actuales').then(r => r.json()).then(d => {
+    document.getElementById('card-ventas').style.display = 'block';
+    document.getElementById('tabla-ventas').innerHTML = d.length ? `<table>${d.map(t => `<tr><td>${t.fecha}</td><td>${t.producto}</td><td>${t.cantidad}</td><td><strong>$${t.total}</strong></td></tr>`).join('')}</table>` : '<p style="color:#999">Sin ventas</p>';
+  });
 }
 
 function descargarActual() {
