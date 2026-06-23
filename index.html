@@ -108,6 +108,12 @@
     @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.5);} }
     .product-price { font-weight: 700; color: var(--primary); font-size: 0.88rem; white-space: nowrap; }
     
+    /* Scroll en catálogo */
+    #lista-productos {
+      max-height: calc(100vh - 340px);
+      overflow-y: auto;
+    }
+    
     .cart-item {
       display: flex; align-items: center; gap: 4px;
       padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 0.7rem;
