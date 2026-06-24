@@ -108,11 +108,7 @@
     @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.5);} }
     .product-price { font-weight: 700; color: var(--primary); font-size: 0.88rem; white-space: nowrap; }
     
-    /* Scroll en catálogo */
-    #lista-productos {
-      max-height: calc(100vh - 340px);
-      overflow-y: auto;
-    }
+    #lista-productos { max-height: calc(100vh - 340px); overflow-y: auto; }
     
     .cart-item {
       display: flex; align-items: center; gap: 4px;
@@ -138,6 +134,8 @@
     }
     .totals-items { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 2px; }
     .totals-amount { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+    .totals-pago { font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px; }
+    .totals-descuento { font-size: 0.85rem; font-weight: 600; color: var(--accent); margin-top: 2px; display: none; }
     
     .ticket-header-row { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 6px; }
     .menu-container { position: relative; }
@@ -227,7 +225,6 @@
 
   <div class="main-content">
     
-    <!-- PRODUCTOS -->
     <div id="vista-productos" class="view active">
       <div class="card"><div class="input-row"><input type="text" id="busqueda-producto" placeholder="Escanea o código..."><button class="btn btn-primary btn-icon" onclick="abrirEscaner('productos')">📷</button></div></div>
       
@@ -256,7 +253,6 @@
       <div class="card"><div class="card-header">📦 Catálogo</div><div id="lista-productos">Cargando...</div></div>
     </div>
     
-    <!-- VENDER -->
     <div id="vista-vender" class="view">
       <div class="card">
         <div class="input-row"><input type="text" id="input-codigo-vender" placeholder="Escanea o código..."><button class="btn btn-primary btn-icon" onclick="abrirEscaner('vender')">📷</button></div>
@@ -280,11 +276,12 @@
       <div class="totals-bar">
         <div class="totals-items" id="total-articulos">📦 0 artículos</div>
         <div class="totals-amount" id="total-monto">$0</div>
+        <div class="totals-pago" id="tipo-pago-display"></div>
+        <div class="totals-descuento" id="descuento-display"></div>
         <button class="btn btn-primary" style="width:100%;margin-top:6px;font-size:0.95rem;" id="btn-accion-principal" onclick="cobrar()">💳 Cobrar</button>
       </div>
     </div>
     
-    <!-- HISTORIAL -->
     <div id="vista-historial" class="view">
       <div class="card" style="text-align:center;"><div style="font-size:2rem;">📋</div><div class="card-header">Historial</div>
         <button class="btn btn-outline" style="width:100%;" onclick="verVentas('TEC')">🏛️ Ventas TEC</button>
@@ -305,18 +302,28 @@
 <div id="scanner-modal"><div id="scanner-viewport"><div class="laser-line"></div></div><button id="close-scanner" onclick="cerrarEscaner()">✕</button></div>
 <div class="toast" id="toast"></div>
 
-<div class="modal-overlay" id="modal-confirm">
+<!-- MODAL 1: Seleccionar pago -->
+<div class="modal-overlay" id="modal-pago">
   <div class="modal-box">
     <div class="modal-icon">💳</div>
-    <div class="modal-title" id="modal-titulo">Confirmar cobro</div>
-    <div class="modal-subtitle" id="modal-monto">Total: $0</div>
+    <div class="modal-title">Tipo de pago</div>
     <div class="payment-options" id="payment-options">
       <div class="payment-btn selected" onclick="seleccionarPago(this,'Efectivo')">💵 Efectivo</div>
       <div class="payment-btn" onclick="seleccionarPago(this,'Tarjeta')">💳 Tarjeta</div>
       <div class="payment-btn" onclick="seleccionarPago(this,'CECO')">🏷️ CECO</div>
-      <div class="payment-btn" onclick="seleccionarPago(this,'Empleado')">🎂 Emp. (-10%)</div>
+      <div class="payment-btn" onclick="seleccionarPago(this,'Nomina')">💼 Nómina (-10%)</div>
     </div>
-    <div class="modal-buttons"><button class="btn btn-outline" onclick="cerrarModal()">Cancelar</button><button class="btn btn-primary" id="btn-confirmar-modal" onclick="ejecutarAccionPrincipal()">Cobrar</button></div>
+    <div class="modal-buttons"><button class="btn btn-outline" onclick="cerrarModalPago()">Cancelar</button><button class="btn btn-primary" onclick="siguientePaso()">Siguiente →</button></div>
+  </div>
+</div>
+
+<!-- MODAL 2: Confirmar cobro -->
+<div class="modal-overlay" id="modal-confirm">
+  <div class="modal-box">
+    <div class="modal-icon">✅</div>
+    <div class="modal-title" id="modal-titulo-confirm">Confirmar cobro</div>
+    <div class="modal-subtitle" id="modal-resumen"></div>
+    <div class="modal-buttons"><button class="btn btn-outline" onclick="cerrarModalConfirm()">Cancelar</button><button class="btn btn-primary" onclick="ejecutarCobro()">💳 Confirmar cobro</button></div>
   </div>
 </div>
 
@@ -399,10 +406,7 @@ function renderizarProductos(arr) {
       <div class="product-main">
         <div class="product-id">${p.id}</div>
         <div class="product-name">${p.descripcion}</div>
-        <div class="product-meta">
-          <span class="product-cat">${p.categoria||'TEC'}</span>
-          <span class="product-stock"><span class="stock-dot ${dotClass}"></span>${stockText} pzas</span>
-        </div>
+        <div class="product-meta"><span class="product-cat">${p.categoria||'TEC'}</span><span class="product-stock"><span class="stock-dot ${dotClass}"></span>${stockText} pzas</span></div>
       </div>
       <div class="product-price">$${precio.toFixed(2)}</div></div>`;
   }).join('');
@@ -410,16 +414,9 @@ function renderizarProductos(arr) {
 
 document.getElementById('busqueda-producto').addEventListener('input', function() {
   let txt = this.value.trim();
-  if (!txt) { 
-    renderizarProductos(productos); 
-    document.getElementById('card-edicion-existente').style.display = 'none';
-    document.getElementById('card-nuevo-producto').style.display = 'none';
-    return; 
-  }
-  
+  if (!txt) { renderizarProductos(productos); document.getElementById('card-edicion-existente').style.display = 'none'; document.getElementById('card-nuevo-producto').style.display = 'none'; return; }
   let esCodigo = /^\d+$/.test(txt);
   let exacto = productos.find(p => p.id === txt);
-  
   if (exacto) {
     if (!requiereUsuario()) return;
     codigoEdicion = exacto.id;
@@ -437,17 +434,10 @@ document.getElementById('busqueda-producto').addEventListener('input', function(
     if (!requiereUsuario()) return;
     document.getElementById('card-edicion-existente').style.display = 'none';
     document.getElementById('card-nuevo-producto').style.display = 'block';
-    if (esCodigo) {
-      document.getElementById('nuevo-id').value = txt;
-      document.getElementById('nuevo-descripcion').value = '';
-    } else {
-      document.getElementById('nuevo-id').value = '';
-      document.getElementById('nuevo-descripcion').value = txt;
-    }
-    document.getElementById('nuevo-precio').value = '';
-    document.getElementById('nuevo-stock').value = '';
-    document.getElementById('nuevo-categoria').value = 'TEC';
-    codigoEdicion = esCodigo ? txt : '';
+    if (esCodigo) { document.getElementById('nuevo-id').value = txt; document.getElementById('nuevo-descripcion').value = ''; }
+    else { document.getElementById('nuevo-id').value = ''; document.getElementById('nuevo-descripcion').value = txt; }
+    document.getElementById('nuevo-precio').value = ''; document.getElementById('nuevo-stock').value = '';
+    document.getElementById('nuevo-categoria').value = 'TEC'; codigoEdicion = esCodigo ? txt : '';
     renderizarProductos([]);
   }
 });
@@ -460,23 +450,15 @@ function guardarCambios() {
   let cat = document.getElementById('edit-categoria-existente').value;
   let existente = productos.find(p => p.id === codigoEdicion);
   let desc = document.getElementById('titulo-edicion-existente').textContent;
-  
   let precioCambio = (precio !== Number(existente.precio));
   let stockCambio = (stock > 0);
-  
-  if (!precioCambio && !stockCambio) return mostrarToast('No hay cambios que guardar');
-  
+  if (!precioCambio && !stockCambio) return mostrarToast('No hay cambios');
   let stockFinal = stockCambio ? Number(existente.stock) + stock : Number(existente.stock);
-  
-  fetch(URL_API, { method: 'POST', body: JSON.stringify({ 
-    accion: 'guardar_producto', registradoPor: usuarioActual, 
-    datos: { id: codigoEdicion, descripcion: desc, precio, stock: stockFinal, categoria: cat, stockMinimo: 5 } 
-  })})
+  fetch(URL_API, { method: 'POST', body: JSON.stringify({ accion: 'guardar_producto', registradoPor: usuarioActual, datos: { id: codigoEdicion, descripcion: desc, precio, stock: stockFinal, categoria: cat, stockMinimo: 5 } })})
   .then(() => {
     if (precioCambio && stockCambio) mostrarToast('✅ Precio e inventario actualizados');
     else if (precioCambio) mostrarToast('✅ Precio actualizado');
     else mostrarToast('✅ Inventario actualizado');
-    
     document.getElementById('edit-precio-existente').disabled = true;
     document.getElementById('edit-stock-existente').value = '';
     document.getElementById('stock-actual-existente').textContent = stockFinal + ' pzas';
@@ -490,12 +472,10 @@ function crearProducto() {
   let precio = parseFloat(document.getElementById('nuevo-precio').value) || 0;
   let stock = parseInt(document.getElementById('nuevo-stock').value) || 0;
   let cat = document.getElementById('nuevo-categoria').value;
-  
-  if (!desc || precio <= 0 || stock <= 0) return mostrarToast('Completa descripción, precio y stock');
+  if (!desc || precio <= 0 || stock <= 0) return mostrarToast('Completa todo');
   if (!id) id = 'ID' + Date.now().toString().slice(-6);
-  if (productos.find(p => p.id === id)) return mostrarToast('❌ El ID ya existe');
-  
-  fetch(URL_API, { method: 'POST', body: JSON.stringify({ accion: 'guardar_producto', registradoPor: usuarioActual, datos: { id, descripcion: desc, precio, stock, categoria: cat, stockMinimo: 5 } }) })
+  if (productos.find(p => p.id === id)) return mostrarToast('❌ ID ya existe');
+  fetch(URL_API, { method: 'POST', body: JSON.stringify({ accion: 'guardar_producto', registradoPor: usuarioActual, datos: { id, descripcion: desc, precio, stock, categoria: cat, stockMinimo: 5 } })})
     .then(() => { mostrarToast('✅ Producto creado'); cancelarEdicion(); cargarProductos(); });
 }
 
@@ -522,126 +502,113 @@ function agregarAlCarrito() {
   if(!cod) return mostrarToast('Código requerido');
   let p = productos.find(x=>x.id===cod);
   if(!p) return mostrarToast('❌ Producto no encontrado');
-  
   let nombre = p.descripcion, precio = Number(p.precio), cat = p.categoria || 'TEC';
-  
   if (modoDevolucion) {
     let existe = carrito.find(x=>x.id===cod && x.devolucion);
-    if(existe) existe.cantidad++;
-    else carrito.push({id:cod,descripcion:nombre,cantidad:1,precio,categoria:cat,devolucion:true});
+    if(existe) existe.cantidad++; else carrito.push({id:cod,descripcion:nombre,cantidad:1,precio,categoria:cat,devolucion:true});
   } else {
     let existe = carrito.find(x=>x.id===cod && !x.devolucion);
-    if(existe) {
-      let stockDisp = Number(p.stock);
-      if(existe.cantidad >= stockDisp) return mostrarToast(stockDisp<=1?'⚠️ ¡Última pieza!':'⚠️ Stock máximo: '+stockDisp);
-      existe.cantidad++;
-    } else carrito.push({id:cod,descripcion:nombre,cantidad:1,precio,categoria:cat,devolucion:false});
+    if(existe) { let stockDisp = Number(p.stock); if(existe.cantidad >= stockDisp) return mostrarToast(stockDisp<=1?'⚠️ ¡Última pieza!':'⚠️ Stock máximo: '+stockDisp); existe.cantidad++; }
+    else carrito.push({id:cod,descripcion:nombre,cantidad:1,precio,categoria:cat,devolucion:false});
   }
-  document.getElementById('input-codigo-vender').value='';
-  renderizarCarrito();
+  document.getElementById('input-codigo-vender').value=''; renderizarCarrito();
 }
 
 function cambiarCantidad(id, d) {
-  let item = carrito.find(x=>x.id===id);
-  if(!item) return;
-  if (!item.devolucion) {
-    let producto = productos.find(p=>p.id===id);
-    let stockDisp = producto?Number(producto.stock):0;
-    if(d>0 && item.cantidad>=stockDisp) return mostrarToast(stockDisp<=1?'⚠️ ¡Última pieza!':'⚠️ Stock máximo: '+stockDisp);
-  }
-  item.cantidad+=d;
-  if(item.cantidad<=0) carrito=carrito.filter(x=>x.id!==id);
-  renderizarCarrito();
+  let item = carrito.find(x=>x.id===id); if(!item) return;
+  if (!item.devolucion) { let producto = productos.find(p=>p.id===id); let stockDisp = producto?Number(producto.stock):0; if(d>0 && item.cantidad>=stockDisp) return mostrarToast(stockDisp<=1?'⚠️ ¡Última pieza!':'⚠️ Stock máximo: '+stockDisp); }
+  item.cantidad+=d; if(item.cantidad<=0) carrito=carrito.filter(x=>x.id!==id); renderizarCarrito();
 }
 
 function editarCantidad(id, el) {
-  let item = carrito.find(x=>x.id===id);
-  let v = parseInt(el.value);
-  if(isNaN(v)||v<=0){el.value=item.cantidad;return;}
-  if (!item.devolucion) {
-    let producto = productos.find(p=>p.id===id);
-    let stockDisp = producto?Number(producto.stock):0;
-    if(v>stockDisp){ mostrarToast(stockDisp<=1?'⚠️ ¡Última pieza!':'⚠️ Solo hay '+stockDisp); el.value=stockDisp; v=stockDisp; }
-  }
-  item.cantidad=v;
-  renderizarCarrito();
+  let item = carrito.find(x=>x.id===id); let v = parseInt(el.value); if(isNaN(v)||v<=0){el.value=item.cantidad;return;}
+  if (!item.devolucion) { let producto = productos.find(p=>p.id===id); let stockDisp = producto?Number(producto.stock):0; if(v>stockDisp){ mostrarToast(stockDisp<=1?'⚠️ ¡Última pieza!':'⚠️ Solo hay '+stockDisp); el.value=stockDisp; v=stockDisp; } }
+  item.cantidad=v; renderizarCarrito();
 }
 
 function eliminarItem(id) { carrito = carrito.filter(x=>x.id!==id); renderizarCarrito(); }
 
 function renderizarCarrito() {
   let c=document.getElementById('lista-carrito'), ta=0, tm=0;
-  if(!carrito.length){ c.innerHTML='<div class="empty-state">🛒 Vacío</div>'; document.getElementById('total-articulos').textContent='📦 0 artículos'; document.getElementById('total-monto').textContent='$0'; return; }
+  if(!carrito.length){ c.innerHTML='<div class="empty-state">🛒 Vacío</div>'; document.getElementById('total-articulos').textContent='📦 0 artículos'; document.getElementById('total-monto').textContent='$0'; document.getElementById('tipo-pago-display').textContent=''; document.getElementById('descuento-display').style.display='none'; return; }
   let tec = carrito.filter(x=>x.categoria==='TEC'), mil = carrito.filter(x=>x.categoria==='MILENIO');
   let html = '', mostrarCategorias = tec.length > 0 && mil.length > 0;
   function renderGrupo(items, titulo, emoji) {
     let h = '', subt = 0;
     if (mostrarCategorias && items.length > 0) h += `<div class="cart-category-header">${emoji} ${titulo}</div>`;
-    items.forEach(item => {
-      let sub = item.cantidad * Number(item.precio); subt += sub; ta += item.cantidad; tm += sub;
+    items.forEach(item => { let sub = item.cantidad * Number(item.precio); subt += sub; ta += item.cantidad; tm += sub;
       h += `<div class="cart-item"><div class="cart-info"><div class="cart-id">${item.id}${item.devolucion?' 🔄':''}</div><div class="cart-name">${item.descripcion}</div><div class="cart-unit">$${Number(item.precio).toFixed(2)} c/u</div></div><div class="cart-controls"><button class="btn btn-outline btn-sm" onclick="cambiarCantidad('${item.id}',-1)">−</button><input class="cart-qty" value="${item.cantidad}" onchange="editarCantidad('${item.id}',this)"><button class="btn btn-outline btn-sm" onclick="cambiarCantidad('${item.id}',1)">+</button></div><div class="cart-subtotal">$${sub.toFixed(2)}</div><button class="btn-delete" onclick="eliminarItem('${item.id}')">✕</button></div>`;
     });
     if (mostrarCategorias && items.length > 0) h += `<div class="cart-category-subtotal">Subtotal ${titulo}: $${subt.toFixed(2)}</div>`;
     return h;
   }
-  html += renderGrupo(tec, 'Tec de Monterrey', '🏛️');
-  html += renderGrupo(mil, 'Tec Milenio', '🎓');
+  html += renderGrupo(tec, 'Tec de Monterrey', '🏛️'); html += renderGrupo(mil, 'Tec Milenio', '🎓');
   c.innerHTML = html;
   document.getElementById('total-articulos').textContent = `📦 ${ta} artículos`;
   document.getElementById('total-monto').textContent = `$${Math.abs(tm).toFixed(2)}`;
+  actualizarTotales();
 }
 
 function seleccionarPago(el, tipo) {
-  document.querySelectorAll('.payment-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('#payment-options .payment-btn').forEach(b => b.classList.remove('selected'));
   el.classList.add('selected');
   tipoPagoSeleccionado = tipo;
+}
+
+function actualizarTotales() {
+  let total = parseFloat(document.getElementById('total-monto').textContent.replace('$','')) || 0;
+  let display = document.getElementById('tipo-pago-display');
+  let descDisplay = document.getElementById('descuento-display');
+  if (total > 0) {
+    display.textContent = '💳 ' + tipoPagoSeleccionado;
+    if (tipoPagoSeleccionado === 'Nomina') {
+      descDisplay.style.display = 'block';
+      descDisplay.textContent = 'Nómina (-10%): $' + (total * 0.9).toFixed(2);
+    } else { descDisplay.style.display = 'none'; }
+  }
 }
 
 function cobrar() {
   if(!carrito.length) return mostrarToast('Vacío');
   if(!requiereUsuario()) return;
-  let total = document.getElementById('total-monto').textContent.replace('$','');
-  if (tipoPagoSeleccionado === 'Empleado') total = (parseFloat(total) * 0.9).toFixed(2);
-  document.getElementById('modal-titulo').textContent = 'Confirmar cobro';
-  document.getElementById('modal-monto').textContent = 'Total: $' + total + (tipoPagoSeleccionado === 'Empleado' ? ' (-10%)' : '');
-  document.getElementById('btn-confirmar-modal').textContent = 'Cobrar';
-  document.getElementById('payment-options').style.display = 'flex';
-  accionPrincipal = 'cobrar';
+  document.getElementById('modal-pago').style.display = 'flex';
+}
+
+function cerrarModalPago() { document.getElementById('modal-pago').style.display = 'none'; }
+
+function siguientePaso() {
+  cerrarModalPago();
+  let total = parseFloat(document.getElementById('total-monto').textContent.replace('$','')) || 0;
+  let descuento = tipoPagoSeleccionado === 'Nomina' ? total * 0.9 : total;
+  let resumen = `Total: $${total.toFixed(2)}<br>Tipo: ${tipoPagoSeleccionado}`;
+  if (tipoPagoSeleccionado === 'Nomina') resumen += `<br><span style="color:var(--accent);font-weight:600;">Nómina (-10%): $${descuento.toFixed(2)}</span>`;
+  document.getElementById('modal-resumen').innerHTML = resumen;
   document.getElementById('modal-confirm').style.display = 'flex';
+}
+
+function cerrarModalConfirm() { document.getElementById('modal-confirm').style.display = 'none'; }
+
+function ejecutarCobro() {
+  cerrarModalConfirm();
+  let carritoCobro = carrito.filter(x => !x.devolucion).map(item => {
+    let precio = tipoPagoSeleccionado === 'Nomina' ? Number(item.precio) * 0.9 : Number(item.precio);
+    return {...item, precio};
+  });
+  let devoluciones = carrito.filter(x => x.devolucion);
+  let body = { accion: 'cobrar', vendedor: usuarioActual, tipoPago: tipoPagoSeleccionado, datos: carritoCobro };
+  if (devoluciones.length > 0) body.devoluciones = devoluciones.map(d => ({...d, motivo: document.getElementById('motivo-devolucion').value}));
+  fetch(URL_API, { method: 'POST', body: JSON.stringify(body) })
+    .then(() => { mostrarToast('✅ Venta registrada'); carrito = []; renderizarCarrito(); cargarProductos(); });
 }
 
 function devolver() {
   if(!carrito.length) return mostrarToast('Vacío');
   if(!requiereUsuario()) return;
   let total = document.getElementById('total-monto').textContent.replace('$','');
-  document.getElementById('modal-titulo').textContent = 'Confirmar devolución';
-  document.getElementById('modal-monto').textContent = 'Total a devolver: $' + total;
-  document.getElementById('btn-confirmar-modal').textContent = 'Devolver';
-  document.getElementById('payment-options').style.display = 'none';
-  accionPrincipal = 'devolver';
+  document.getElementById('modal-resumen').innerHTML = 'Total a devolver: $' + total;
+  document.getElementById('modal-titulo-confirm').textContent = 'Confirmar devolución';
   document.getElementById('modal-confirm').style.display = 'flex';
-}
-
-function cerrarModal() { document.getElementById('modal-confirm').style.display = 'none'; }
-
-function ejecutarAccionPrincipal() {
-  cerrarModal();
-  if (accionPrincipal === 'cobrar') {
-    let carritoCobro = carrito.filter(x => !x.devolucion).map(item => {
-      let precio = tipoPagoSeleccionado === 'Empleado' ? Number(item.precio) * 0.9 : Number(item.precio);
-      return {...item, precio};
-    });
-    let devoluciones = carrito.filter(x => x.devolucion);
-    let body = { accion: 'cobrar', vendedor: usuarioActual, tipoPago: tipoPagoSeleccionado, datos: carritoCobro };
-    if (devoluciones.length > 0) body.devoluciones = devoluciones.map(d => ({...d, motivo: document.getElementById('motivo-devolucion').value}));
-    fetch(URL_API, { method: 'POST', body: JSON.stringify(body) })
-      .then(() => { mostrarToast('✅ Venta registrada'); carrito = []; renderizarCarrito(); cargarProductos(); });
-  } else {
-    let motivo = document.getElementById('motivo-devolucion').value;
-    fetch(URL_API, { method: 'POST', body: JSON.stringify({ accion: 'devolver', vendedor: usuarioActual, motivo, datos: carrito }) })
-      .then(() => { mostrarToast('✅ Devolución registrada'); carrito = []; renderizarCarrito(); cargarProductos();
-        document.getElementById('modo-devolucion').checked = false; toggleDevolucion(); });
-  }
+  accionPrincipal = 'devolver';
 }
 
 function cargarArchivos(){ fetch(URL_API+'?obtener=archivos').then(r=>r.json()).then(d=>{ document.getElementById('lista-archivos').innerHTML=d.length?d.map(a=>`<div>📁 ${a}</div>`).join(''):'<p>Sin archivos</p>'; }); }
