@@ -86,10 +86,15 @@
     .btn-icon { width: 36px; height: 36px; padding: 0; border-radius: 10px; font-size: 1rem; flex-shrink: 0; }
     .btn-sm { padding: 5px 10px; font-size: 0.7rem; border-radius: 6px; }
     
+    .quick-btns { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+    .btn-quick { padding: 6px 10px; font-size: 0.68rem; border-radius: 8px; background: #E8F5E9; color: var(--accent); border: 1px solid var(--accent); font-weight: 500; cursor: pointer; }
+    .btn-quick:active { background: var(--accent); color: white; }
+    
     .product-item {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 10px; border-bottom: 1px solid var(--border); gap: 10px;
+      padding: 10px; border-bottom: 1px solid var(--border); gap: 8px; cursor: pointer;
     }
+    .product-item:active { background: var(--bg); }
     .product-item.critical {
       border-left: 3px solid var(--danger); background: #FFF5F5;
       animation: pulseBorder 1.8s ease-in-out infinite;
@@ -107,6 +112,7 @@
     .stock-dot.critical { background: #D64545; animation: pulse 1.5s ease-in-out infinite; }
     @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.5);} }
     .product-price { font-weight: 700; color: var(--primary); font-size: 0.88rem; white-space: nowrap; }
+    .product-edit-icon { font-size: 0.85rem; color: var(--text-secondary); opacity: 0.5; }
     
     #lista-productos { max-height: calc(100vh - 340px); overflow-y: auto; }
     
@@ -193,8 +199,13 @@
     .modal-subtitle { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px; }
     .modal-buttons { display: flex; gap: 6px; margin-top: 8px; }
     .modal-buttons button { flex: 1; }
-    .payment-options { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
-    .payment-btn { flex: 1; min-width: 45%; padding: 10px; border: 2px solid var(--border); border-radius: 10px; background: var(--surface); font-weight: 500; font-size: 0.78rem; cursor: pointer; text-align: center; }
+    
+    .payment-options { display: flex; flex-direction: column; gap: 5px; margin: 10px 0; }
+    .payment-btn { 
+      width: 100%; padding: 10px; border: 2px solid var(--border);
+      border-radius: 10px; background: var(--surface); font-weight: 500;
+      font-size: 0.75rem; cursor: pointer; text-align: center; 
+    }
     .payment-btn.selected { border-color: var(--accent); background: #E8F8F5; color: var(--accent); font-weight: 600; }
     
     .welcome-box { text-align: center; padding: 40px 20px; }
@@ -226,30 +237,17 @@
   <div class="main-content">
     
     <div id="vista-productos" class="view active">
-      <div class="card"><div class="input-row"><input type="text" id="busqueda-producto" placeholder="Escanea o código..."><button class="btn btn-primary btn-icon" onclick="abrirEscaner('productos')">📷</button></div></div>
-      
+      <div class="card"><div class="input-row"><input type="text" id="busqueda-producto" placeholder="Escanea o busca por nombre..."><button class="btn btn-primary btn-icon" onclick="abrirEscaner('productos')">📷</button></div></div>
       <div class="card" id="card-edicion-existente" style="display:none;">
         <div class="card-header" id="titulo-edicion-existente">Producto</div>
         <div style="margin-bottom:6px;"><label style="font-size:0.72rem;color:var(--text-secondary);">ID / Descripción</label><input type="text" id="edit-id-desc-existente" disabled style="width:100%;"></div>
         <div class="stock-label">📦 Inventario actual: <span id="stock-actual-existente" class="stock-value">0 pzas</span></div>
         <div class="form-row"><label>Precio:</label><input type="number" id="edit-precio-existente" disabled><button class="btn btn-sm btn-outline" onclick="habilitarPrecio()">✏️</button></div>
         <div class="form-row"><label>Stock:</label><input type="number" id="edit-stock-existente" placeholder="Cantidad a agregar"></div>
-        <div style="margin-bottom:6px;"><label style="font-size:0.72rem;color:var(--text-secondary);">Categoría:</label><select id="edit-categoria-existente"><option value="TEC">🏛️ TEC</option><option value="MILENIO">🎓 MILENIO</option></select></div>
+        <div style="margin-bottom:6px;"><select id="edit-categoria-existente"><option value="TEC">🏛️ TEC</option><option value="MILENIO">🎓 MILENIO</option></select></div>
         <button class="btn btn-accent" style="width:100%;" onclick="guardarCambios()">💾 Guardar cambios</button>
         <button class="btn btn-outline" style="width:100%;margin-top:4px;font-size:0.7rem;" onclick="cancelarEdicion()">Cerrar</button>
       </div>
-      
-      <div class="card" id="card-nuevo-producto" style="display:none;">
-        <div class="card-header">🆕 Nuevo producto</div>
-        <div class="form-row"><label>ID:</label><input type="text" id="nuevo-id" placeholder="Código (opcional)"></div>
-        <div class="form-row"><label>Descripción:</label><input type="text" id="nuevo-descripcion" placeholder="Nombre del producto"></div>
-        <div class="form-row"><label>Precio:</label><input type="number" id="nuevo-precio" placeholder="$0"></div>
-        <div class="form-row"><label>Stock:</label><input type="number" id="nuevo-stock" placeholder="Cantidad inicial"></div>
-        <div style="margin-bottom:6px;"><label style="font-size:0.72rem;color:var(--text-secondary);">Categoría:</label><select id="nuevo-categoria"><option value="TEC">🏛️ TEC</option><option value="MILENIO">🎓 MILENIO</option></select></div>
-        <button class="btn btn-accent" style="width:100%;" onclick="crearProducto()">💾 Guardar producto</button>
-        <button class="btn btn-outline" style="width:100%;margin-top:4px;font-size:0.7rem;" onclick="cancelarEdicion()">Cancelar</button>
-      </div>
-      
       <div class="card"><div class="card-header">📦 Catálogo</div><div id="lista-productos">Cargando...</div></div>
     </div>
     
@@ -257,20 +255,16 @@
       <div class="card">
         <div class="input-row"><input type="text" id="input-codigo-vender" placeholder="Escanea o código..."><button class="btn btn-primary btn-icon" onclick="abrirEscaner('vender')">📷</button></div>
         <button class="btn btn-accent" style="width:100%;" onclick="agregarAlCarrito()">Agregar</button>
+        <div class="quick-btns">
+          <button class="btn-quick" onclick="agregarRapido('2010870300016')">🛍️ Bolsa (S)</button>
+          <button class="btn-quick" onclick="agregarRapido('2010870400013')">🛍️ Bolsa (M)</button>
+          <button class="btn-quick" onclick="agregarRapido('2010870600017')">🛍️ Bolsa (L)</button>
+          <button class="btn-quick" onclick="agregarRapido('2011081900019')">📦 Caja</button>
+        </div>
       </div>
       <div class="card">
-        <div class="ticket-header-row">
-          <div class="card-header">🧾 Ticket</div>
-          <div class="menu-container">
-            <button class="menu-btn" onclick="toggleMenu()">⋮</button>
-            <div class="menu-dropdown" id="menu-dropdown">
-              <div class="checkbox-row"><input type="checkbox" id="modo-devolucion" onchange="toggleDevolucion()"><label for="modo-devolucion">Modo devolución</label></div>
-            </div>
-          </div>
-        </div>
-        <div class="devolution-options" id="devolucion-options" style="display:none;">
-          <select id="motivo-devolucion" style="width:100%;"><option value="Cambio">Cambio</option><option value="Defecto">Defecto</option><option value="Garantía">Garantía</option><option value="Otro">Otro</option></select>
-        </div>
+        <div class="ticket-header-row"><div class="card-header">🧾 Ticket</div><div class="menu-container"><button class="menu-btn" onclick="toggleMenu()">⋮</button><div class="menu-dropdown" id="menu-dropdown"><div class="checkbox-row"><input type="checkbox" id="modo-devolucion" onchange="toggleDevolucion()"><label for="modo-devolucion">Modo devolución</label></div></div></div></div>
+        <div class="devolution-options" id="devolucion-options" style="display:none;"><select id="motivo-devolucion" style="width:100%;"><option value="Cambio">Cambio</option><option value="Defecto">Defecto</option><option value="Garantía">Garantía</option><option value="Otro">Otro</option></select></div>
         <div id="lista-carrito"><div class="empty-state">🛒 Vacío</div></div>
       </div>
       <div class="totals-bar">
@@ -302,14 +296,14 @@
 <div id="scanner-modal"><div id="scanner-viewport"><div class="laser-line"></div></div><button id="close-scanner" onclick="cerrarEscaner()">✕</button></div>
 <div class="toast" id="toast"></div>
 
-<!-- MODAL 1: Seleccionar pago -->
 <div class="modal-overlay" id="modal-pago">
   <div class="modal-box">
     <div class="modal-icon">💳</div>
     <div class="modal-title">Tipo de pago</div>
     <div class="payment-options" id="payment-options">
-      <div class="payment-btn selected" onclick="seleccionarPago(this,'Efectivo')">💵 Efectivo</div>
-      <div class="payment-btn" onclick="seleccionarPago(this,'Tarjeta')">💳 Tarjeta</div>
+      <div class="payment-btn selected" onclick="seleccionarPago(this,'Tarjeta Débito')">💳 Débito</div>
+      <div class="payment-btn" onclick="seleccionarPago(this,'Tarjeta Crédito')">💳 Crédito</div>
+      <div class="payment-btn" onclick="seleccionarPago(this,'Efectivo')">💵 Efectivo</div>
       <div class="payment-btn" onclick="seleccionarPago(this,'CECO')">🏷️ CECO</div>
       <div class="payment-btn" onclick="seleccionarPago(this,'Nomina')">💼 Nómina (-10%)</div>
     </div>
@@ -317,7 +311,6 @@
   </div>
 </div>
 
-<!-- MODAL 2: Confirmar cobro -->
 <div class="modal-overlay" id="modal-confirm">
   <div class="modal-box">
     <div class="modal-icon">✅</div>
@@ -334,9 +327,8 @@ let carrito = [];
 let scanner = null;
 let codigoEdicion = '';
 let usuarioActual = '';
-let tipoPagoSeleccionado = 'Efectivo';
+let tipoPagoSeleccionado = 'Tarjeta Débito';
 let modoDevolucion = false;
-let accionPrincipal = 'cobrar';
 
 window.onload = function() {
   usuarioActual = localStorage.getItem('store_usuario') || '';
@@ -378,8 +370,8 @@ function toggleDevolucion() {
   modoDevolucion = document.getElementById('modo-devolucion').checked;
   document.getElementById('devolucion-options').style.display = modoDevolucion ? 'block' : 'none';
   let btn = document.getElementById('btn-accion-principal');
-  if (modoDevolucion) { btn.textContent = '🔄 Devolver'; btn.onclick = devolver; accionPrincipal = 'devolver'; }
-  else { btn.textContent = '💳 Cobrar'; btn.onclick = cobrar; accionPrincipal = 'cobrar'; }
+  if (modoDevolucion) { btn.textContent = '🔄 Devolver'; btn.onclick = devolver; }
+  else { btn.textContent = '💳 Cobrar'; btn.onclick = cobrar; }
 }
 
 function cargarProductos() {
@@ -402,45 +394,41 @@ function renderizarProductos(arr) {
     let stock = Number(p.stock), precio = Number(p.precio);
     let dotClass = stock <= 1 ? 'critical' : (stock <= 5 ? 'low' : 'normal');
     let stockText = stock <= 1 ? '⚠️ ' + stock : stock;
-    return `<div class="product-item${stock <= 1 ? ' critical' : ''}">
-      <div class="product-main">
-        <div class="product-id">${p.id}</div>
-        <div class="product-name">${p.descripcion}</div>
+    return `<div class="product-item${stock <= 1 ? ' critical' : ''}" onclick="editarProducto('${p.id}')">
+      <div class="product-main"><div class="product-id">${p.id}</div><div class="product-name">${p.descripcion}</div>
         <div class="product-meta"><span class="product-cat">${p.categoria||'TEC'}</span><span class="product-stock"><span class="stock-dot ${dotClass}"></span>${stockText} pzas</span></div>
-      </div>
-      <div class="product-price">$${precio.toFixed(2)}</div></div>`;
+      </div><div class="product-price">$${precio.toFixed(2)}</div><span class="product-edit-icon">✏️</span></div>`;
   }).join('');
 }
 
+// Búsqueda: ID exacto (números) o por nombre (texto)
 document.getElementById('busqueda-producto').addEventListener('input', function() {
   let txt = this.value.trim();
-  if (!txt) { renderizarProductos(productos); document.getElementById('card-edicion-existente').style.display = 'none'; document.getElementById('card-nuevo-producto').style.display = 'none'; return; }
+  if (!txt) { renderizarProductos(productos); document.getElementById('card-edicion-existente').style.display = 'none'; return; }
   let esCodigo = /^\d+$/.test(txt);
-  let exacto = productos.find(p => p.id === txt);
-  if (exacto) {
-    if (!requiereUsuario()) return;
-    codigoEdicion = exacto.id;
-    document.getElementById('card-nuevo-producto').style.display = 'none';
-    document.getElementById('card-edicion-existente').style.display = 'block';
-    document.getElementById('titulo-edicion-existente').textContent = exacto.descripcion;
-    document.getElementById('edit-id-desc-existente').value = exacto.id + ' - ' + exacto.descripcion;
-    document.getElementById('stock-actual-existente').textContent = Number(exacto.stock) + ' pzas';
-    document.getElementById('edit-precio-existente').value = Number(exacto.precio);
-    document.getElementById('edit-precio-existente').disabled = true;
-    document.getElementById('edit-categoria-existente').value = exacto.categoria || 'TEC';
-    document.getElementById('edit-stock-existente').value = '';
-    renderizarProductos([exacto]);
-  } else if (txt.length >= 2) {
-    if (!requiereUsuario()) return;
-    document.getElementById('card-edicion-existente').style.display = 'none';
-    document.getElementById('card-nuevo-producto').style.display = 'block';
-    if (esCodigo) { document.getElementById('nuevo-id').value = txt; document.getElementById('nuevo-descripcion').value = ''; }
-    else { document.getElementById('nuevo-id').value = ''; document.getElementById('nuevo-descripcion').value = txt; }
-    document.getElementById('nuevo-precio').value = ''; document.getElementById('nuevo-stock').value = '';
-    document.getElementById('nuevo-categoria').value = 'TEC'; codigoEdicion = esCodigo ? txt : '';
-    renderizarProductos([]);
+  let filtrados;
+  if (esCodigo) {
+    let exacto = productos.find(p => p.id === txt);
+    filtrados = exacto ? [exacto] : [];
+  } else {
+    filtrados = productos.filter(p => p.descripcion.toLowerCase().includes(txt.toLowerCase()));
   }
+  renderizarProductos(filtrados);
 });
+
+function editarProducto(id) {
+  let exacto = productos.find(p => p.id === id);
+  if (!exacto || !requiereUsuario()) return;
+  codigoEdicion = exacto.id;
+  document.getElementById('card-edicion-existente').style.display = 'block';
+  document.getElementById('titulo-edicion-existente').textContent = exacto.descripcion;
+  document.getElementById('edit-id-desc-existente').value = exacto.id + ' - ' + exacto.descripcion;
+  document.getElementById('stock-actual-existente').textContent = Number(exacto.stock) + ' pzas';
+  document.getElementById('edit-precio-existente').value = Number(exacto.precio);
+  document.getElementById('edit-precio-existente').disabled = true;
+  document.getElementById('edit-categoria-existente').value = exacto.categoria || 'TEC';
+  document.getElementById('edit-stock-existente').value = '';
+}
 
 function habilitarPrecio() { document.getElementById('edit-precio-existente').disabled = false; document.getElementById('edit-precio-existente').focus(); }
 
@@ -456,9 +444,7 @@ function guardarCambios() {
   let stockFinal = stockCambio ? Number(existente.stock) + stock : Number(existente.stock);
   fetch(URL_API, { method: 'POST', body: JSON.stringify({ accion: 'guardar_producto', registradoPor: usuarioActual, datos: { id: codigoEdicion, descripcion: desc, precio, stock: stockFinal, categoria: cat, stockMinimo: 5 } })})
   .then(() => {
-    if (precioCambio && stockCambio) mostrarToast('✅ Precio e inventario actualizados');
-    else if (precioCambio) mostrarToast('✅ Precio actualizado');
-    else mostrarToast('✅ Inventario actualizado');
+    mostrarToast(precioCambio && stockCambio ? '✅ Precio e inventario actualizados' : (precioCambio ? '✅ Precio actualizado' : '✅ Inventario actualizado'));
     document.getElementById('edit-precio-existente').disabled = true;
     document.getElementById('edit-stock-existente').value = '';
     document.getElementById('stock-actual-existente').textContent = stockFinal + ' pzas';
@@ -466,22 +452,8 @@ function guardarCambios() {
   });
 }
 
-function crearProducto() {
-  let id = document.getElementById('nuevo-id').value.trim();
-  let desc = document.getElementById('nuevo-descripcion').value.trim();
-  let precio = parseFloat(document.getElementById('nuevo-precio').value) || 0;
-  let stock = parseInt(document.getElementById('nuevo-stock').value) || 0;
-  let cat = document.getElementById('nuevo-categoria').value;
-  if (!desc || precio <= 0 || stock <= 0) return mostrarToast('Completa todo');
-  if (!id) id = 'ID' + Date.now().toString().slice(-6);
-  if (productos.find(p => p.id === id)) return mostrarToast('❌ ID ya existe');
-  fetch(URL_API, { method: 'POST', body: JSON.stringify({ accion: 'guardar_producto', registradoPor: usuarioActual, datos: { id, descripcion: desc, precio, stock, categoria: cat, stockMinimo: 5 } })})
-    .then(() => { mostrarToast('✅ Producto creado'); cancelarEdicion(); cargarProductos(); });
-}
-
 function cancelarEdicion() {
   document.getElementById('card-edicion-existente').style.display = 'none';
-  document.getElementById('card-nuevo-producto').style.display = 'none';
   document.getElementById('busqueda-producto').value = '';
   renderizarProductos(productos);
 }
@@ -497,19 +469,32 @@ function abrirEscaner(ctx) {
 }
 function cerrarEscaner() { scanner&&scanner.stop().then(()=>document.getElementById('scanner-modal').style.display='none'); }
 
+function agregarRapido(id) {
+  let p = productos.find(x=>x.id===id);
+  if(!p) return mostrarToast('Producto no encontrado');
+  if (modoDevolucion) {
+    let existe = carrito.find(x=>x.id===id && x.devolucion);
+    if(existe) existe.cantidad++; else carrito.push({id,descripcion:p.descripcion,cantidad:1,precio:Number(p.precio),categoria:p.categoria||'TEC',devolucion:true});
+  } else {
+    let existe = carrito.find(x=>x.id===id && !x.devolucion);
+    if(existe) { let stockDisp = Number(p.stock); if(existe.cantidad >= stockDisp) return mostrarToast(stockDisp<=1?'⚠️ ¡Última pieza!':'⚠️ Stock máximo: '+stockDisp); existe.cantidad++; }
+    else carrito.push({id,descripcion:p.descripcion,cantidad:1,precio:Number(p.precio),categoria:p.categoria||'TEC',devolucion:false});
+  }
+  renderizarCarrito();
+}
+
 function agregarAlCarrito() {
   let cod = document.getElementById('input-codigo-vender').value.trim();
   if(!cod) return mostrarToast('Código requerido');
   let p = productos.find(x=>x.id===cod);
   if(!p) return mostrarToast('❌ Producto no encontrado');
-  let nombre = p.descripcion, precio = Number(p.precio), cat = p.categoria || 'TEC';
   if (modoDevolucion) {
     let existe = carrito.find(x=>x.id===cod && x.devolucion);
-    if(existe) existe.cantidad++; else carrito.push({id:cod,descripcion:nombre,cantidad:1,precio,categoria:cat,devolucion:true});
+    if(existe) existe.cantidad++; else carrito.push({id:cod,descripcion:p.descripcion,cantidad:1,precio:Number(p.precio),categoria:p.categoria||'TEC',devolucion:true});
   } else {
     let existe = carrito.find(x=>x.id===cod && !x.devolucion);
     if(existe) { let stockDisp = Number(p.stock); if(existe.cantidad >= stockDisp) return mostrarToast(stockDisp<=1?'⚠️ ¡Última pieza!':'⚠️ Stock máximo: '+stockDisp); existe.cantidad++; }
-    else carrito.push({id:cod,descripcion:nombre,cantidad:1,precio,categoria:cat,devolucion:false});
+    else carrito.push({id:cod,descripcion:p.descripcion,cantidad:1,precio:Number(p.precio),categoria:p.categoria||'TEC',devolucion:false});
   }
   document.getElementById('input-codigo-vender').value=''; renderizarCarrito();
 }
@@ -608,7 +593,6 @@ function devolver() {
   document.getElementById('modal-resumen').innerHTML = 'Total a devolver: $' + total;
   document.getElementById('modal-titulo-confirm').textContent = 'Confirmar devolución';
   document.getElementById('modal-confirm').style.display = 'flex';
-  accionPrincipal = 'devolver';
 }
 
 function cargarArchivos(){ fetch(URL_API+'?obtener=archivos').then(r=>r.json()).then(d=>{ document.getElementById('lista-archivos').innerHTML=d.length?d.map(a=>`<div>📁 ${a}</div>`).join(''):'<p>Sin archivos</p>'; }); }
