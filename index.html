@@ -301,8 +301,8 @@
     <div class="modal-icon">💳</div>
     <div class="modal-title">Tipo de pago</div>
     <div class="payment-options" id="payment-options">
-      <div class="payment-btn selected" onclick="seleccionarPago(this,'Tarjeta Débito')">💳 Débito</div>
-      <div class="payment-btn" onclick="seleccionarPago(this,'Tarjeta Crédito')">💳 Crédito</div>
+      <div class="payment-btn selected" onclick="seleccionarPago(this,'Tarjeta Crédito')">💳 Crédito</div>
+      <div class="payment-btn" onclick="seleccionarPago(this,'Tarjeta Débito')">💳 Débito</div>
       <div class="payment-btn" onclick="seleccionarPago(this,'Efectivo')">💵 Efectivo</div>
       <div class="payment-btn" onclick="seleccionarPago(this,'CECO')">🏷️ CECO</div>
       <div class="payment-btn" onclick="seleccionarPago(this,'Nomina')">💼 Nómina (-10%)</div>
@@ -327,7 +327,7 @@ let carrito = [];
 let scanner = null;
 let codigoEdicion = '';
 let usuarioActual = '';
-let tipoPagoSeleccionado = 'Tarjeta Débito';
+let tipoPagoSeleccionado = 'Tarjeta Crédito';
 let modoDevolucion = false;
 
 window.onload = function() {
@@ -401,18 +401,11 @@ function renderizarProductos(arr) {
   }).join('');
 }
 
-// Búsqueda: ID exacto (números) o por nombre (texto)
 document.getElementById('busqueda-producto').addEventListener('input', function() {
   let txt = this.value.trim();
   if (!txt) { renderizarProductos(productos); document.getElementById('card-edicion-existente').style.display = 'none'; return; }
   let esCodigo = /^\d+$/.test(txt);
-  let filtrados;
-  if (esCodigo) {
-    let exacto = productos.find(p => p.id === txt);
-    filtrados = exacto ? [exacto] : [];
-  } else {
-    filtrados = productos.filter(p => p.descripcion.toLowerCase().includes(txt.toLowerCase()));
-  }
+  let filtrados = esCodigo ? productos.filter(p => p.id === txt) : productos.filter(p => p.descripcion.toLowerCase().includes(txt.toLowerCase()));
   renderizarProductos(filtrados);
 });
 
