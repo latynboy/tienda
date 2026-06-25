@@ -181,7 +181,7 @@
     @keyframes pulseBadge { 0%,100%{transform:scale(1);} 50%{transform:scale(1.25);} }
     
     #scanner-modal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; }
-    #scanner-viewport { width: 90%; max-width: 280px; aspect-ratio: 1; border-radius: 18px; overflow: hidden; border: 3px solid var(--accent); position: relative; }
+    #scanner-viewport { width: 100%; max-width: 100%; height: 70vh; border-radius: 0; overflow: hidden; border: none; }
     .laser-line { position: absolute; top: 50%; left: 5%; width: 90%; height: 2px; background: #FF3B30; box-shadow: 0 0 6px #FF3B30; animation: laser 2s ease-in-out infinite; z-index: 10; }
     @keyframes laser { 0%,100%{top:20%;} 50%{top:80%;} }
     #close-scanner { margin-top: 18px; background: none; border: none; color: white; font-size: 1.8rem; cursor: pointer; }
@@ -464,7 +464,7 @@ function cancelarEdicion() {
 function abrirEscaner(ctx) {
   document.getElementById('scanner-modal').style.display = 'flex';
   scanner = new Html5Qrcode("scanner-viewport");
-  scanner.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 230, height: 130 } },
+  scanner.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 350, height: 250 } },
     (txt) => { navigator.vibrate&&navigator.vibrate(80); cerrarEscaner();
       if (ctx==='productos') { document.getElementById('busqueda-producto').value=txt; document.getElementById('busqueda-producto').dispatchEvent(new Event('input')); }
       else { document.getElementById('input-codigo-vender').value=txt; agregarAlCarrito(); }
@@ -586,7 +586,16 @@ function ejecutarCobro() {
   let body = { accion: 'cobrar', vendedor: usuarioActual, tipoPago: tipoPagoSeleccionado, datos: carritoCobro };
   if (devoluciones.length > 0) body.devoluciones = devoluciones.map(d => ({...d, motivo: document.getElementById('motivo-devolucion').value}));
   fetch(URL_API, { method: 'POST', body: JSON.stringify(body) })
-    .then(() => { mostrarToast('✅ Venta registrada'); carrito = []; renderizarCarrito(); cargarProductos(); });
+    .then(() => { 
+      mostrarToast('✅ Venta registrada'); 
+      carrito = []; 
+      renderizarCarrito(); 
+      cargarProductos();
+      tipoPagoSeleccionado = 'Tarjeta Crédito';
+      document.querySelectorAll('#payment-options .payment-btn').forEach(b => b.classList.remove('selected'));
+      document.querySelector('#payment-options .payment-btn').classList.add('selected');
+      actualizarTotales();
+    });
 }
 
 function devolver() {
