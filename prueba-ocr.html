@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Store - Prueba OCR</title>
+  <title>Store - Prueba Captura</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="icon-512.png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/html5-qrcode"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2/dist/quagga.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
@@ -69,9 +70,9 @@
     
     #scanner-modal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; }
     #scanner-viewport { width: 90%; max-width: 350px; aspect-ratio: 1; border-radius: 18px; overflow: hidden; border: 3px solid var(--accent); }
-    #close-scanner { margin-top: 15px; background: none; border: none; color: white; font-size: 1.8rem; cursor: pointer; }
-    #btn-ocr { margin-top: 10px; padding: 10px 20px; background: #FF9800; color: white; border: none; border-radius: 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: none; }
-    #ocr-status { color: white; font-size: 0.8rem; margin-top: 8px; display: none; }
+    #close-scanner { margin-top: 12px; background: none; border: none; color: white; font-size: 1.8rem; cursor: pointer; }
+    #btn-capture { margin-top: 10px; padding: 10px 20px; background: #FF9800; color: white; border: none; border-radius: 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: none; }
+    #capture-status { color: white; font-size: 0.8rem; margin-top: 8px; display: none; }
     
     .result-box { background: #E8F5E9; padding: 15px; border-radius: 10px; margin-top: 15px; font-size: 1.2rem; font-weight: 700; color: var(--accent); }
     .log-box { background: #F5F5F5; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 0.75rem; color: #666; max-height: 150px; overflow-y: auto; text-align: left; }
@@ -84,14 +85,14 @@
 <div class="header">
   <div class="header-left">
     <div class="header-logo-box"><img src="icon.svg" alt="Store" class="header-logo"></div>
-    <span class="header-title">Store - Prueba OCR v2</span>
+    <span class="header-title">Store - Prueba Captura</span>
   </div>
 </div>
 
 <div class="main-content">
   <div class="card">
-    <div class="card-header">🧪 Prueba de Escáner + OCR (mitad inferior)</div>
-    <p style="margin-bottom:10px;color:var(--text-secondary);">Apunta al código. Si no lee, OCR analiza la parte de abajo</p>
+    <div class="card-header">🧪 Prueba: Escáner + Captura + OCR</div>
+    <p style="margin-bottom:10px;color:var(--text-secondary);">Escanea normal. Si falla, captura y analiza.</p>
     <button class="btn btn-primary" onclick="abrirEscaner()">📷 Abrir Escáner</button>
     
     <div class="result-box" id="resultado" style="display:none;"></div>
@@ -105,15 +106,15 @@
 
 <div id="scanner-modal">
   <div id="scanner-viewport"></div>
-  <div id="ocr-status">🔍 Analizando mitad inferior...</div>
-  <button id="btn-ocr" onclick="leerOCR()">🔢 Leer números</button>
+  <div id="capture-status">🔍 Analizando imagen...</div>
+  <button id="btn-capture" onclick="capturarYAnalizar()">📸 Capturar y analizar</button>
   <button id="close-scanner" onclick="cerrarEscaner()">✕ Cerrar</button>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
 let scanner = null;
-let ocrTimeout = null;
+let captureTimeout = null;
 
 function mostrarToast(m) { 
   let t = document.getElementById('toast'); 
@@ -130,8 +131,8 @@ function log(msg) {
 
 function abrirEscaner() {
   document.getElementById('scanner-modal').style.display = 'flex';
-  document.getElementById('btn-ocr').style.display = 'none';
-  document.getElementById('ocr-status').style.display = 'none';
+  document.getElementById('btn-capture').style.display = 'none';
+  document.getElementById('capture-status').style.display = 'none';
   document.getElementById('resultado').style.display = 'none';
   
   log('📷 Escáner iniciado...');
@@ -146,35 +147,36 @@ function abrirEscaner() {
       document.getElementById('resultado').style.display = 'block';
       log('✅ Escáner: ' + txt);
       mostrarToast('✅ Código detectado');
-      clearTimeout(ocrTimeout);
+      clearTimeout(captureTimeout);
       cerrarEscaner();
     },
     () => {}
   );
   
-  ocrTimeout = setTimeout(() => {
-    document.getElementById('btn-ocr').style.display = 'block';
-    log('💡 ¿No lee? Prueba OCR (mitad inferior)');
+  captureTimeout = setTimeout(() => {
+    document.getElementById('btn-capture').style.display = 'block';
+    log('💡 ¿No lee? Captura y analiza');
   }, 4000);
 }
 
 function cerrarEscaner() {
-  clearTimeout(ocrTimeout);
+  clearTimeout(captureTimeout);
   if (scanner) {
     scanner.stop().then(() => {
       document.getElementById('scanner-modal').style.display = 'none';
-      document.getElementById('btn-ocr').style.display = 'none';
-      document.getElementById('ocr-status').style.display = 'none';
+      document.getElementById('btn-capture').style.display = 'none';
+      document.getElementById('capture-status').style.display = 'none';
     });
   } else {
     document.getElementById('scanner-modal').style.display = 'none';
   }
 }
 
-async function leerOCR() {
-  document.getElementById('btn-ocr').style.display = 'none';
-  document.getElementById('ocr-status').style.display = 'block';
-  log('🔢 Iniciando OCR (mitad inferior)...');
+async function capturarYAnalizar() {
+  document.getElementById('btn-capture').style.display = 'none';
+  document.getElementById('capture-status').style.display = 'block';
+  document.getElementById('capture-status').textContent = '📸 Capturando...';
+  log('📸 Iniciando captura y análisis...');
   
   try {
     let viewport = document.getElementById('scanner-viewport');
@@ -182,23 +184,46 @@ async function leerOCR() {
     
     if (!video) {
       log('❌ No se encontró el video');
-      document.getElementById('ocr-status').style.display = 'none';
-      document.getElementById('btn-ocr').style.display = 'block';
+      document.getElementById('capture-status').style.display = 'none';
+      document.getElementById('btn-capture').style.display = 'block';
       return;
     }
     
-    let vw = video.videoWidth;
-    let vh = video.videoHeight;
-    
-    // Canvas: solo la mitad inferior
+    // Crear canvas con la imagen
     let canvas = document.createElement('canvas');
-    canvas.width = vw;
-    canvas.height = vh / 2;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
     let ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, vh/2, vw, vh/2, 0, 0, vw, vh/2);
+    ctx.drawImage(video, 0, 0);
     
-    // Convertir a blanco y negro
-    let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    log('📸 Imagen capturada: ' + canvas.width + 'x' + canvas.height);
+    
+    // Intentar con QuaggaJS (mejor para códigos 1D)
+    document.getElementById('capture-status').textContent = '🔍 Quagga analizando...';
+    
+    let resultado = await analizarConQuagga(canvas);
+    
+    if (resultado) {
+      document.getElementById('resultado').textContent = '✅ Quagga: ' + resultado;
+      document.getElementById('resultado').style.display = 'block';
+      log('✅ Quagga detectó: ' + resultado);
+      mostrarToast('✅ ' + resultado);
+      cerrarEscaner();
+      return;
+    }
+    
+    log('❌ Quagga no detectó. Probando OCR...');
+    document.getElementById('capture-status').textContent = '🔢 Probando OCR...';
+    
+    // Intentar OCR en mitad inferior
+    let canvasMitad = document.createElement('canvas');
+    canvasMitad.width = canvas.width;
+    canvasMitad.height = canvas.height / 2;
+    let ctx2 = canvasMitad.getContext('2d');
+    ctx2.drawImage(canvas, 0, canvas.height/2, canvas.width, canvas.height/2, 0, 0, canvas.width, canvas.height/2);
+    
+    // Blanco y negro
+    let imageData = ctx2.getImageData(0, 0, canvasMitad.width, canvasMitad.height);
     for (let i = 0; i < imageData.data.length; i += 4) {
       let avg = (imageData.data[i] + imageData.data[i+1] + imageData.data[i+2]) / 3;
       let val = avg > 128 ? 255 : 0;
@@ -206,46 +231,60 @@ async function leerOCR() {
       imageData.data[i+1] = val;
       imageData.data[i+2] = val;
     }
-    ctx.putImageData(imageData, 0, 0);
+    ctx2.putImageData(imageData, 0, 0);
     
-    log('📸 Mitad inferior capturada y procesada...');
-    
-    // OCR
-    let result = await Tesseract.recognize(canvas, 'eng', {
+    let result = await Tesseract.recognize(canvasMitad, 'eng', {
       tessedit_char_whitelist: '0123456789 ',
       tessedit_pageseg_mode: '13'
     });
     
     let texto = result.data.text.replace(/\s/g, '');
-    log('📝 Texto detectado: ' + texto);
+    log('📝 OCR: ' + texto);
     
-    // Buscar 13 dígitos
     let match = texto.match(/\d{13}/);
     if (match) {
-      document.getElementById('resultado').textContent = '✅ Código: ' + match[0];
+      document.getElementById('resultado').textContent = '✅ OCR: ' + match[0];
       document.getElementById('resultado').style.display = 'block';
-      log('✅ ÉXITO: ' + match[0]);
+      log('✅ OCR: ' + match[0]);
       mostrarToast('✅ ' + match[0]);
       cerrarEscaner();
       return;
     }
     
-    // Buscar 8+ dígitos
     let matchShort = texto.match(/\d{8,}/);
     if (matchShort) {
       document.getElementById('resultado').textContent = '⚠️ Posible: ' + matchShort[0];
       document.getElementById('resultado').style.display = 'block';
       log('⚠️ Parcial: ' + matchShort[0]);
     } else {
-      log('❌ No se detectaron números');
-      mostrarToast('❌ Sin números');
+      log('❌ Nada detectado');
+      mostrarToast('❌ No se detectó');
     }
   } catch(err) {
     log('❌ Error: ' + err.message);
   }
   
-  document.getElementById('ocr-status').style.display = 'none';
-  document.getElementById('btn-ocr').style.display = 'block';
+  document.getElementById('capture-status').style.display = 'none';
+  document.getElementById('btn-capture').style.display = 'block';
+}
+
+function analizarConQuagga(canvas) {
+  return new Promise((resolve) => {
+    Quagga.decodeSingle({
+      src: canvas.toDataURL(),
+      numOfWorkers: 2,
+      decoder: {
+        readers: ["ean_reader", "ean_8_reader", "code_128_reader", "code_39_reader", "upc_reader", "upc_e_reader", "itf_reader", "codabar_reader"]
+      },
+      locate: true
+    }, function(result) {
+      if (result && result.codeResult) {
+        resolve(result.codeResult.code);
+      } else {
+        resolve(null);
+      }
+    });
+  });
 }
 </script>
 </body>
