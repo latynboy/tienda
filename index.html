@@ -137,7 +137,8 @@
     
     .totals-bar {
       background: var(--surface); border-radius: var(--radius);
-      padding: 10px; margin-top: 5px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); text-align: center;
+      padding: 10px; margin-top: auto; box-shadow: 0 -4px 16px rgba(0,0,0,0.08); text-align: center;
+      flex-shrink: 0; position: sticky; bottom: 0; z-index: 10;
     }
     .totals-items { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 2px; }
     .totals-amount { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
@@ -257,15 +258,15 @@
         <div class="input-row"><input type="text" id="input-codigo-vender" placeholder="Escanea o código..."><button class="btn btn-primary btn-icon" onclick="abrirEscaner('vender')">📷</button></div>
         <button class="btn btn-accent" style="width:100%;" onclick="agregarAlCarrito()">Agregar</button>
         <div class="quick-btns">
-          <button class="btn-quick" onclick="agregarRapido('2010870300016')">🛍️ Bolsa (S)</button>
-          <button class="btn-quick" onclick="agregarRapido('2010870400013')">🛍️ Bolsa (M)</button>
-          <button class="btn-quick" onclick="agregarRapido('2010870600017')">🛍️ Bolsa (L)</button>
+          <button class="btn-quick" onclick="agregarRapido('2010870300016')">🛍️ (S)</button>
+          <button class="btn-quick" onclick="agregarRapido('2010870400013')">🛍️ (M)</button>
+          <button class="btn-quick" onclick="agregarRapido('2010870600017')">🛍️ (L)</button>
           <button class="btn-quick" onclick="agregarRapido('2011081900019')">📦 Caja</button>
-          <button class="btn-quick" onclick="agregarRapido('2010523100017')">🧢 Gorra NE Negra</button>
-          <button class="btn-quick" onclick="agregarRapido('2010541800012')">🧢 Gorra NE Gris</button>
+          <button class="btn-quick" onclick="agregarRapido('2010523100017')">🧢 NE Negra</button>
+          <button class="btn-quick" onclick="agregarRapido('2010541800012')">🧢 NE Gris</button>
         </div>
       </div>
-      <div class="card">
+      <div class="card" style="flex:1; overflow-y:auto; margin-bottom:0;">
         <div class="ticket-header-row"><div class="card-header">🧾 Ticket</div><div class="menu-container"><button class="menu-btn" onclick="toggleMenu()">⋮</button><div class="menu-dropdown" id="menu-dropdown"><div class="checkbox-row"><input type="checkbox" id="modo-devolucion" onchange="toggleDevolucion()"><label for="modo-devolucion">Modo devolución</label></div></div></div></div>
         <div class="devolution-options" id="devolucion-options" style="display:none;"><select id="motivo-devolucion" style="width:100%;"><option value="Cambio">Cambio</option><option value="Defecto">Defecto</option><option value="Garantía">Garantía</option><option value="Otro">Otro</option></select></div>
         <div id="lista-carrito"><div class="empty-state">🛒 Vacío</div></div>
