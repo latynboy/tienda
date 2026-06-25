@@ -131,19 +131,21 @@
     .btn-delete { background: none; border: none; color: #bbb; font-size: 0.7rem; cursor: pointer; padding: 1px 3px; border-radius: 50%; flex-shrink: 0; }
     .btn-delete:active { color: var(--danger); }
     
-    #lista-carrito { max-height: 40vh; overflow-y: auto; }
     .cart-category-header { font-size: 0.68rem; font-weight: 600; padding: 3px 0; margin-top: 2px; color: var(--primary); border-bottom: 2px solid var(--accent); }
     .cart-category-subtotal { font-size: 0.66rem; color: var(--text-secondary); text-align: right; padding: 2px 0; }
     
     .totals-bar {
       background: var(--surface); border-radius: var(--radius);
-      padding: 10px; margin-top: auto; box-shadow: 0 -4px 16px rgba(0,0,0,0.08); text-align: center;
-      flex-shrink: 0; position: sticky; bottom: 0; z-index: 10;
+      padding: 10px; margin-bottom: 7px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); text-align: center;
     }
-    .totals-items { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 2px; }
-    .totals-amount { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
-    .totals-pago { font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px; }
-    .totals-descuento { font-size: 0.85rem; font-weight: 600; color: var(--accent); margin-top: 2px; display: none; }
+    .totals-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 4px 0;
+    }
+    .totals-items { font-size: 0.73rem; color: var(--text-secondary); }
+    .totals-amount { font-size: 1.3rem; font-weight: 700; color: var(--primary); }
+    .totals-pago { font-size: 0.7rem; color: var(--text-secondary); }
+    .totals-descuento { font-size: 0.8rem; font-weight: 600; color: var(--accent); margin-top: 2px; display: none; }
     
     .ticket-header-row { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 6px; }
     .menu-container { position: relative; }
@@ -266,17 +268,21 @@
           <button class="btn-quick" onclick="agregarRapido('2010541800012')">🧢 NE Gris</button>
         </div>
       </div>
-      <div class="card" style="flex:1; overflow-y:auto; margin-bottom:0;">
+      
+      <div class="totals-bar">
+        <div class="totals-row">
+          <span class="totals-items" id="total-articulos">📦 0 artículos</span>
+          <span class="totals-amount" id="total-monto">$0</span>
+          <span class="totals-pago" id="tipo-pago-display"></span>
+        </div>
+        <div class="totals-descuento" id="descuento-display"></div>
+        <button class="btn btn-primary" style="width:100%;margin-top:6px;font-size:0.95rem;" id="btn-accion-principal" onclick="cobrar()">💳 Cobrar</button>
+      </div>
+      
+      <div class="card" style="max-height: 35vh; overflow-y: auto;">
         <div class="ticket-header-row"><div class="card-header">🧾 Ticket</div><div class="menu-container"><button class="menu-btn" onclick="toggleMenu()">⋮</button><div class="menu-dropdown" id="menu-dropdown"><div class="checkbox-row"><input type="checkbox" id="modo-devolucion" onchange="toggleDevolucion()"><label for="modo-devolucion">Modo devolución</label></div></div></div></div>
         <div class="devolution-options" id="devolucion-options" style="display:none;"><select id="motivo-devolucion" style="width:100%;"><option value="Cambio">Cambio</option><option value="Defecto">Defecto</option><option value="Garantía">Garantía</option><option value="Otro">Otro</option></select></div>
         <div id="lista-carrito"><div class="empty-state">🛒 Vacío</div></div>
-      </div>
-      <div class="totals-bar">
-        <div class="totals-items" id="total-articulos">📦 0 artículos</div>
-        <div class="totals-amount" id="total-monto">$0</div>
-        <div class="totals-pago" id="tipo-pago-display"></div>
-        <div class="totals-descuento" id="descuento-display"></div>
-        <button class="btn btn-primary" style="width:100%;margin-top:6px;font-size:0.95rem;" id="btn-accion-principal" onclick="cobrar()">💳 Cobrar</button>
       </div>
     </div>
     
